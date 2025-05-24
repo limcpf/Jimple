@@ -1,5 +1,7 @@
 package com.jimple.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDate;
 
 public record MarkdownProperties(
@@ -8,7 +10,7 @@ public record MarkdownProperties(
         LocalDate date
 ) implements Properties{
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "MarkdownProperties{" +
                 "publish=" + publish +
                 ", title='" + title + '\'' +

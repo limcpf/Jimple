@@ -1,4 +1,4 @@
-package main.java.com.jimple;
+package com.jimple;
 
 public class Main {
 }

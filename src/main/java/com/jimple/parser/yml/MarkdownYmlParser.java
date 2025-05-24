@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -22,8 +21,6 @@ public class MarkdownYmlParser implements YmlParser{
         String yamlContent = extractYamlFrontMatter(contents);
 
         if(!yamlContent.isEmpty()) {
-            boolean publish = false;
-            String title = "";
             LocalDate date = LocalDate.now();
 
             Yaml yaml = new Yaml();
@@ -33,8 +30,8 @@ public class MarkdownYmlParser implements YmlParser{
                 throw new IllegalArgumentException("title must be set");
             }
             
-            publish = "true".equals(yamlMap.get("publish"));
-            title = yamlMap.get("title").toString();
+            boolean publish = "true".equals(yamlMap.get("publish"));
+            String title = yamlMap.get("title").toString();
             Object tempDate = yamlMap.get("date");
             
             if(tempDate instanceof Date d) {
@@ -55,7 +52,7 @@ public class MarkdownYmlParser implements YmlParser{
 
     /**
      * Markdown 텍스트에서 YAML Front Matter(문서 맨 앞의 --- 블록)를 추출합니다.
-     * - BOM이나 빈 줄을 건너뛰고 가장 먼저 나타나는 '---' 블록만 처리
+     * - BOM 이나 빈 줄을 건너뛰고 가장 먼저 나타나는 '---' 블록만 처리
      * - 다양한 줄바꿈(\n, \r\n, \r) 지원
      * - 블록이 닫히지 않으면 null 반환
      *
@@ -98,7 +95,7 @@ public class MarkdownYmlParser implements YmlParser{
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return "";
