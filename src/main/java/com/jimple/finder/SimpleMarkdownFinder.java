@@ -14,7 +14,10 @@ public class SimpleMarkdownFinder implements MarkdownFinder{
         if(!Files.isReadable(rootDir)) throw new IllegalArgumentException("rootDir must be readable");
 
         try (Stream<Path> paths = Files.walk(rootDir)) {
-            return paths.filter(Files::isRegularFile).toList();
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(x -> x.endsWith(".md"))
+                    .toList();
         } catch (IOException e) {
             throw new RuntimeException("Error walking directory", e);
         }
