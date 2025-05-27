@@ -33,14 +33,14 @@ class SimpleMarkdownFinderTest {
     void findAll_ShouldReturnAllFiles() throws IOException {
         // 테스트 파일 생성
         Path file1 = Files.createFile(tempDir.resolve("test1.txt"));
-        Path file2 = Files.createFile(tempDir.resolve("test2.txt"));
-        Path subDir = Files.createDirectory(tempDir.resolve("subdir"));
-        Path file3 = Files.createFile(subDir.resolve("test3.txt"));
+        Path file2 = Files.createFile(tempDir.resolve("test2.md"));
+        Path subDir = Files.createDirectory(tempDir.resolve("subDir"));
+        Path file3 = Files.createFile(subDir.resolve("test3.md"));
 
         List<Path> result = finder.findAll(tempDir);
 
-        assertEquals(3, result.size());
-        assertTrue(result.contains(file1));
+        assertEquals(2, result.size());
+        assertFalse(result.contains(file1));
         assertTrue(result.contains(file2));
         assertTrue(result.contains(file3));
     }
