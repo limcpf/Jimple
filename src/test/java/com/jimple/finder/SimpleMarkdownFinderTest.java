@@ -33,6 +33,10 @@ class SimpleMarkdownFinderTest {
     void findAll_ShouldReturnAllFiles() throws IOException {
         // 테스트 파일 생성
         Path file1 = Files.createFile(tempDir.resolve("test1.txt"));
+//         파일 생성과 동시에 내용 쓰기
+//        Path file1 = Files.createFile(tempDir.resolve("test1.txt"));
+//        Files.writeString(file1, "여기에 원하는 내용을 입력하세요");
+
         Path file2 = Files.createFile(tempDir.resolve("test2.md"));
         Path subDir = Files.createDirectory(tempDir.resolve("subDir"));
         Path file3 = Files.createFile(subDir.resolve("test3.md"));

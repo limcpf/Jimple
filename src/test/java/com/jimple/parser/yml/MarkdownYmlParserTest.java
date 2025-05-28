@@ -32,6 +32,51 @@ public class MarkdownYmlParserTest {
             Assertions.assertEquals("java.nio.file.Files.walk", markdownProperties.title());
             Assertions.assertEquals(LocalDate.of(2025,5,21), markdownProperties.date());
         }
+
+        @Test
+        void getProperties_ShouldThrowException_WhenYamlFrontMatterIsMissing() {
+            String markdownContents = """
+                    # Hello World
+                    > Hahaha
+                    """;
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> parser.getProperties(markdownContents));
+        }
+
+        @Test
+        void getProperties_ShouldThrowException_WhenTitleIsMissing() {
+            String markdownContents = """
+                    ---
+                    publish: "true"
+                    date: 2025-05-21
+                    ---
+                    # Hello World
+                    > Hahaha
+                    """;
+
+            Assertions.assertThrows(IllegalArgumentException.class, () -> parser.getProperties(markdownContents));
+        }
+
+        @Test
+        void getProperties_ShouldDefaultToCurrentDate_WhenDateIsMissing() {
+            String markdownContents = """
+                    ---
+                    publish: "true"
+                    title: java.nio.file.Files.walk
+                    ---
+                    # Hello World
+                    > Hahaha
+                    """;
+
+            MarkdownProperties markdownProperties = parser.getProperties(markdownContents);
+
+            Assertions.assertTrue(markdownProperties.date().isEqual(LocalDate.now()));
+        }
+
+        @Test
+        void getProperties_ShouldThrowException_WhenContentsIsNull() {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> parser.getProperties(null));
+        }
     }
 
 
