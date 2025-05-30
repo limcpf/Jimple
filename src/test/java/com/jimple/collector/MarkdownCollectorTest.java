@@ -107,8 +107,8 @@ class MarkdownCollectorTest {
         List<MarkdownFile> result = collector.collectPublishedMarkdowns(rootDir);
 
         assertEquals(2, result.size());
-        assertEquals(expectedFile1.getPath(), result.get(0).getPath());
-        assertEquals(expectedFile2.getPath(), result.get(1).getPath());
+        assertEquals(expectedFile1.path(), result.get(0).path());
+        assertEquals(expectedFile2.path(), result.get(1).path());
 
         verify(mockFinder, times(1)).findAll(rootDir);
         verify(mockExtractor, times(1)).extractFullContents(mockPath1);
