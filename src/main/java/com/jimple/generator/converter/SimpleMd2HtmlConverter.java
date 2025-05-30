@@ -1,8 +1,13 @@
 package com.jimple.generator.converter;
 
+import com.jimple.model.MarkdownProperties;
+import com.jimple.model.Properties;
+import com.jimple.parser.yml.MarkdownYmlParser;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+
+import java.time.format.DateTimeFormatter;
 
 public class SimpleMd2HtmlConverter implements Md2HtmlConverter {
     private final Parser parser;
@@ -14,11 +19,26 @@ public class SimpleMd2HtmlConverter implements Md2HtmlConverter {
     }
 
     @Override
-    public String convertToHtml(String markdown) {
+    public String convertBodyToHtml(String markdown) {
         if (markdown == null || markdown.isEmpty()) {
             return "";
         }
         Node document = parser.parse(markdown);
         return renderer.render(document);
+    }
+
+    @Override
+    public String convertHeaderToHtml(MarkdownProperties properties) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<header>\n");
+        sb.append("  <h1>").append(properties.title()).append("</h1>\n");
+
+        if (properties.date() != null) {
+            String formattedDate = properties.date().format(DateTimeFormatter.ISO_LOCAL_DATE);
+            sb.append("  <p class=\"date\">").append(formattedDate).append("</p>\n");
+        }
+
+        sb.append("</header>\n");
+        return sb.toString();
     }
 }
