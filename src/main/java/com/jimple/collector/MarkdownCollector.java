@@ -33,7 +33,7 @@ public class MarkdownCollector {
 
                     return new MarkdownFile(properties, contents, path.toString());
                 })
-                .filter(item -> item.isPublish())
+                .filter(MarkdownFile::isPublish)
                 .collect(Collectors.toList());
     }
 }

@@ -16,7 +16,7 @@ public class MarkdownYmlParser implements YmlParser{
         if(frontmatter == null) throw new IllegalArgumentException("contents must not be null");
 
         if(!frontmatter.isEmpty()) {
-            LocalDate date = LocalDate.now();
+            LocalDate date;
 
             Yaml yaml = new Yaml();
             Map<String, Object> yamlMap = yaml.load(frontmatter);
