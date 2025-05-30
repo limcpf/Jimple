@@ -43,6 +43,8 @@ public class MarkdownYmlParser implements YmlParser{
                 } catch (DateTimeParseException e) {
                     throw new IllegalArgumentException("date must be in yyyy-MM-dd format");
                 }
+            } else {
+                date = LocalDate.now();
             }
 
             return new MarkdownProperties(publish, title, date);

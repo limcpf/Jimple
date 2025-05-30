@@ -48,14 +48,19 @@ class MarkdownYmlParserTest {
     }
 
     @Test
-    void testGetProperties_InvalidDateFormat_ThrowsException() {
+    void testGetProperties_invalidDate_ReturnsMarkdownPropertiesWithCurrentDate() {
         // Arrange
         String frontmatter = "title: Sample Title\npublish: true\ndate: InvalidDate";
         MarkdownYmlParser parser = new MarkdownYmlParser();
 
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(frontmatter));
-        assertEquals("date must be in yyyy-MM-dd format", exception.getMessage());
+        // Act
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        // Assert
+        assertNotNull(properties);
+        assertEquals("Sample Title", properties.title());
+        assertTrue(properties.publish());
+        assertEquals(LocalDate.now(), properties.date());
     }
 
     @Test
