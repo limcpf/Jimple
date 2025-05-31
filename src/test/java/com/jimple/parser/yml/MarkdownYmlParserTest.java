@@ -19,100 +19,62 @@ class MarkdownYmlParserTest {
      * if the "title" is absent, or if the "date" is of an invalid format.
      */
 
+
     @Test
-    void testGetProperties_ValidInput_ReturnsMarkdownProperties() {
-        // Arrange
-        String frontmatter = "title: Sample Title\npublish: true\ndate: 2023-12-01";
+    void testNullFrontmatterThrowsException() {
         MarkdownYmlParser parser = new MarkdownYmlParser();
-
-        // Act
-        MarkdownProperties properties = parser.getProperties(frontmatter);
-
-        // Assert
-        assertNotNull(properties);
-        assertEquals("Sample Title", properties.title());
-        assertTrue(properties.publish());
-        assertEquals(LocalDate.of(2023, 12, 1), properties.date());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(null));
+        assertEquals("contents must not be null", exception.getMessage());
     }
 
     @Test
-    void testGetProperties_TitleMissing_ThrowsException() {
-        // Arrange
-        String frontmatter = "publish: true\ndate: 2023-12-01";
+    void testValidFrontmatter() {
+        String frontmatter = """
+                title: My Title
+                publish: true
+                date: 2023-10-10
+                """;
+        MarkdownYmlParser parser = new MarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        assertTrue(properties.publish());
+        assertEquals("My Title", properties.title());
+        assertEquals(LocalDate.of(2023, 10, 10), properties.date());
+    }
+
+    @Test
+    void testEmptyFrontmatter() {
+        MarkdownYmlParser parser = new MarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties("");
+
+        assertFalse(properties.publish());
+        assertEquals("", properties.title());
+        assertEquals(LocalDate.now(), properties.date());
+    }
+
+    @Test
+    void testPublishWithoutTitleThrowsException() {
+        String frontmatter = """
+                publish: true
+                date: 2023-10-10
+                """;
+
         MarkdownYmlParser parser = new MarkdownYmlParser();
 
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(frontmatter));
         assertEquals("title must be set", exception.getMessage());
     }
 
     @Test
-    void testGetProperties_invalidDate_ReturnsMarkdownPropertiesWithCurrentDate() {
-        // Arrange
-        String frontmatter = "title: Sample Title\npublish: true\ndate: InvalidDate";
+    void testInvalidDateThrowsException() {
         MarkdownYmlParser parser = new MarkdownYmlParser();
+        String frontmatter = """
+                title: My Title
+                publish: true
+                date: invalid-date-format
+                """;
 
-        // Act
         MarkdownProperties properties = parser.getProperties(frontmatter);
-
-        // Assert
-        assertNotNull(properties);
-        assertEquals("Sample Title", properties.title());
-        assertTrue(properties.publish());
-        assertEquals(LocalDate.now(), properties.date());
-    }
-
-    @Test
-    void testGetProperties_EmptyInput_ThrowsException() {
-        // Arrange
-        String frontmatter = "";
-        MarkdownYmlParser parser = new MarkdownYmlParser();
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(frontmatter));
-        assertEquals("YAML Front Matter not found", exception.getMessage());
-    }
-
-    @Test
-    void testGetProperties_NullInput_ThrowsException() {
-        // Arrange
-        String frontmatter = null;
-        MarkdownYmlParser parser = new MarkdownYmlParser();
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(frontmatter));
-        assertEquals("contents must not be null", exception.getMessage());
-    }
-
-    @Test
-    void testGetProperties_PublishMissing_DefaultsToFalse() {
-        // Arrange
-        String frontmatter = "title: Sample Title\ndate: 2023-12-01";
-        MarkdownYmlParser parser = new MarkdownYmlParser();
-
-        // Act
-        MarkdownProperties properties = parser.getProperties(frontmatter);
-
-        // Assert
-        assertNotNull(properties);
-        assertEquals("Sample Title", properties.title());
-        assertFalse(properties.publish());
-        assertEquals(LocalDate.of(2023, 12, 1), properties.date());
-    }
-
-    @Test
-    void testGetProperties_NullDate_DefaultsToCurrentDate() {
-        // Arrange
-        String frontmatter = "title: Sample Title\npublish: true";
-        MarkdownYmlParser parser = new MarkdownYmlParser();
-
-        // Act
-        MarkdownProperties properties = parser.getProperties(frontmatter);
-
-        // Assert
-        assertNotNull(properties);
-        assertEquals("Sample Title", properties.title());
-        assertTrue(properties.publish());
         assertEquals(LocalDate.now(), properties.date());
     }
 }

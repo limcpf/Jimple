@@ -20,16 +20,20 @@ public class MarkdownYmlParser implements YmlParser{
 
             Yaml yaml = new Yaml();
             Map<String, Object> yamlMap = yaml.load(frontmatter);
-            
-            if(!yamlMap.containsKey("title")) {
-                throw new IllegalArgumentException("title must be set");
-            }
+
+
 
             boolean publish = false;
 
             Object publishObj = yamlMap.get("publish");
             if(publishObj instanceof Boolean b) {
                 publish = b;
+            }
+
+            if(publish && !yamlMap.containsKey("title")) {
+                throw new IllegalArgumentException("title must be set");
+            } else if(!publish) {
+                return new MarkdownProperties(false, "", LocalDate.now());
             }
 
             String title = yamlMap.get("title").toString();
@@ -47,9 +51,9 @@ public class MarkdownYmlParser implements YmlParser{
                 date = LocalDate.now();
             }
 
-            return new MarkdownProperties(publish, title, date);
+            return new MarkdownProperties(true, title, date);
         } else {
-            throw new IllegalArgumentException("YAML Front Matter not found");
+            return new MarkdownProperties(false, "", LocalDate.now());
         }
     }
 }
