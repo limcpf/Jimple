@@ -3,6 +3,7 @@ package com.jimple.parser.yml;
 import com.jimple.model.MarkdownProperties;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -10,7 +11,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Map;
 
-public class MarkdownYmlParser implements YmlParser{
+public class SimpleMarkdownYmlParser implements YmlParser{
     @Override
     public @NotNull MarkdownProperties getProperties(String frontmatter) {
         if(frontmatter == null) throw new IllegalArgumentException("contents must not be null");
@@ -19,9 +20,15 @@ public class MarkdownYmlParser implements YmlParser{
             LocalDate date;
 
             Yaml yaml = new Yaml();
-            Map<String, Object> yamlMap = yaml.load(frontmatter);
+            Map<String, Object> yamlMap;
 
+            try {
+                yamlMap = yaml.load(frontmatter);
+            } catch (YAMLException e) {
+                return new MarkdownProperties(false, "", LocalDate.now());
+            }
 
+            if(yamlMap == null) { return new MarkdownProperties(false, "", LocalDate.now());}
 
             boolean publish = false;
 

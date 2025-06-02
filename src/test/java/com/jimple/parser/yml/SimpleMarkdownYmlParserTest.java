@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MarkdownYmlParserTest {
+class SimpleMarkdownYmlParserTest {
 
     /**
      * Tests the getProperties method of MarkdownYmlParser.
@@ -22,7 +22,7 @@ class MarkdownYmlParserTest {
 
     @Test
     void testNullFrontmatterThrowsException() {
-        MarkdownYmlParser parser = new MarkdownYmlParser();
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(null));
         assertEquals("contents must not be null", exception.getMessage());
     }
@@ -34,7 +34,7 @@ class MarkdownYmlParserTest {
                 publish: true
                 date: 2023-10-10
                 """;
-        MarkdownYmlParser parser = new MarkdownYmlParser();
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
         MarkdownProperties properties = parser.getProperties(frontmatter);
 
         assertTrue(properties.publish());
@@ -44,7 +44,7 @@ class MarkdownYmlParserTest {
 
     @Test
     void testEmptyFrontmatter() {
-        MarkdownYmlParser parser = new MarkdownYmlParser();
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
         MarkdownProperties properties = parser.getProperties("");
 
         assertFalse(properties.publish());
@@ -59,7 +59,7 @@ class MarkdownYmlParserTest {
                 date: 2023-10-10
                 """;
 
-        MarkdownYmlParser parser = new MarkdownYmlParser();
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> parser.getProperties(frontmatter));
         assertEquals("title must be set", exception.getMessage());
@@ -67,7 +67,7 @@ class MarkdownYmlParserTest {
 
     @Test
     void testInvalidDateThrowsException() {
-        MarkdownYmlParser parser = new MarkdownYmlParser();
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
         String frontmatter = """
                 title: My Title
                 publish: true

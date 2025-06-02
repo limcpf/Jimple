@@ -4,7 +4,7 @@ import com.jimple.finder.MarkdownFinder;
 import com.jimple.model.MarkdownFile;
 import com.jimple.model.MarkdownProperties;
 import com.jimple.parser.extractor.MarkdownExtractor;
-import com.jimple.parser.yml.MarkdownYmlParser;
+import com.jimple.parser.yml.SimpleMarkdownYmlParser;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 
 public class MarkdownCollector {
     private final MarkdownFinder finder;
-    private final MarkdownYmlParser parser;
+    private final SimpleMarkdownYmlParser parser;
     private final MarkdownExtractor extractor;
 
-    public MarkdownCollector(MarkdownFinder finder, MarkdownYmlParser parser, MarkdownExtractor extractor) {
+    public MarkdownCollector(MarkdownFinder finder, SimpleMarkdownYmlParser parser, MarkdownExtractor extractor) {
         this.finder = finder;
         this.parser = parser;
         this.extractor = extractor;

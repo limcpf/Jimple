@@ -4,7 +4,7 @@ import com.jimple.finder.MarkdownFinder;
 import com.jimple.model.MarkdownFile;
 import com.jimple.model.MarkdownProperties;
 import com.jimple.parser.extractor.MarkdownExtractor;
-import com.jimple.parser.yml.MarkdownYmlParser;
+import com.jimple.parser.yml.SimpleMarkdownYmlParser;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -27,7 +27,7 @@ class MarkdownCollectorTest {
     @Test
     void testCollectPublishedMarkdownsWithNoMarkdownFiles() {
         MarkdownFinder mockFinder = mock(MarkdownFinder.class);
-        MarkdownYmlParser mockParser = mock(MarkdownYmlParser.class);
+        SimpleMarkdownYmlParser mockParser = mock(SimpleMarkdownYmlParser.class);
         MarkdownExtractor mockExtractor = mock(MarkdownExtractor.class);
         MarkdownCollector collector = new MarkdownCollector(mockFinder, mockParser, mockExtractor);
 
@@ -44,7 +44,7 @@ class MarkdownCollectorTest {
     @Test
     void testCollectPublishedMarkdownsWithNonPublishedFiles() {
         MarkdownFinder mockFinder = mock(MarkdownFinder.class);
-        MarkdownYmlParser mockParser = mock(MarkdownYmlParser.class);
+        SimpleMarkdownYmlParser mockParser = mock(SimpleMarkdownYmlParser.class);
         MarkdownExtractor mockExtractor = mock(MarkdownExtractor.class);
         MarkdownCollector collector = new MarkdownCollector(mockFinder, mockParser, mockExtractor);
 
@@ -73,7 +73,7 @@ class MarkdownCollectorTest {
     @Test
     void testCollectPublishedMarkdownsWithPublishedFiles() {
         MarkdownFinder mockFinder = mock(MarkdownFinder.class);
-        MarkdownYmlParser mockParser = mock(MarkdownYmlParser.class);
+        SimpleMarkdownYmlParser mockParser = mock(SimpleMarkdownYmlParser.class);
         MarkdownExtractor mockExtractor = mock(MarkdownExtractor.class);
         MarkdownCollector collector = new MarkdownCollector(mockFinder, mockParser, mockExtractor);
 
