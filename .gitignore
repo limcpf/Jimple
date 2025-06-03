@@ -28,3 +28,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### JAVA ###
+target
+
+/jimple-result
+/jimple-result/**
+/dependency-reduced-pom.xml
