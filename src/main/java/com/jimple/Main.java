@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Main {
     private static final String DEFAULT_RESULT_DIR = "jimple-result";
@@ -54,13 +56,13 @@ public class Main {
                 try {
                     Files.createDirectories(resultDir.resolve("assets"));
                     Files.createDirectories(resultDir.resolve("assets/fonts"));
-                    Files.copy(Main.class.getResourceAsStream("/jimple.css"), resultDir.resolve("assets/jimple.css"));
-                    Files.copy(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Regular-subset.woff2"), resultDir.resolve("assets/fonts/IBMPlexSansKR-Regular.woff2"));
-                    Files.copy(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Bold-subset.woff2"), resultDir.resolve("assets/fonts/IBMPlexSansKR-Bold.woff2"));
-                } catch (IOException e) {
-                    System.err.println("에셋 파일 복사 중 오류 발생");
+                    Files.copy(Objects.requireNonNull(Main.class.getResourceAsStream("/jimple.css")), resultDir.resolve("assets/jimple.css"));
+                    Files.copy(Objects.requireNonNull(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Regular-subset.woff2")), resultDir.resolve("assets/fonts/IBMPlexSansKR-Regular.woff2"));
+                    Files.copy(Objects.requireNonNull(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Bold-subset.woff2")), resultDir.resolve("assets/fonts/IBMPlexSansKR-Bold.woff2"));
+                } catch (IOException | NullPointerException e) {
+                    throw new RuntimeException("에셋 파일 복사 중 오류 발생");
                 }
-                
+
                 ResultManager manager = createResultManager(resultDir);
                 manager.processAndSaveResults(sourceDir);
                 break;
@@ -92,8 +94,8 @@ public class Main {
 
     private static void cleanupResultDirectory(Path resultDir) {
         if (Files.exists(resultDir)) {
-            try {
-                Files.walk(resultDir)
+            try (Stream<Path> pathStream = Files.walk(resultDir)) {
+                pathStream
                         .sorted((a, b) -> -a.compareTo(b))
                         .forEach(path -> {
                             try {

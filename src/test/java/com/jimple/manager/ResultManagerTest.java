@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -79,7 +80,7 @@ class ResultManagerTest {
 
         resultManager.processAndSaveResults(sourceDir);
 
-        assertEquals(0, resultDir.toFile().listFiles().length, "No HTML file should be created when there are no markdown files");
+        assertEquals(0, Objects.requireNonNull(resultDir.toFile().listFiles()).length, "No HTML file should be created when there are no markdown files");
     }
 
     @Test
@@ -90,7 +91,7 @@ class ResultManagerTest {
 
         resultManager.processAndSaveResults(sourceDir);
 
-        assertEquals(0, resultDir.toFile().listFiles().length, "No HTML file should be created for empty HTML content");
+        assertEquals(0, Objects.requireNonNull(resultDir.toFile().listFiles()).length, "No HTML file should be created for empty HTML content");
     }
 
     private MarkdownFile createMockMarkdownFile(String title, String fileName) {
