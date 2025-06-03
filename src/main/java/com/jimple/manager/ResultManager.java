@@ -7,7 +7,6 @@ import com.jimple.model.MarkdownFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class ResultManager {
@@ -41,9 +40,8 @@ public class ResultManager {
     }
 
     private void saveHtmlFile(MarkdownFile item, String html) {
-        Path sourcePath = Paths.get(item.path());
-        String fileName = sourcePath.getFileName().toString();
-        String htmlFileName = fileName.substring(0, fileName.lastIndexOf('.')) + ".html";
+        String title = item.properties().title();
+        String htmlFileName = title.replaceAll("\\s+", "-") + ".html";
         Path targetPath = resultDir.resolve(htmlFileName);
 
         try {
