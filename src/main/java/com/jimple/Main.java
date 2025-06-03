@@ -7,8 +7,9 @@ import com.jimple.generator.SimpleMarkdownGenerator;
 import com.jimple.generator.converter.SimpleMd2HtmlConverter;
 import com.jimple.manager.ResultManager;
 import com.jimple.parser.extractor.SimpleMarkdownExtractor;
-import com.jimple.parser.yml.MarkdownYmlParser;
+import com.jimple.parser.yml.SimpleMarkdownYmlParser;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,6 +48,19 @@ public class Main {
                         Paths.get(args[2]) :
                         Paths.get(DEFAULT_RESULT_DIR);
 
+                cleanupResultDirectory(resultDir);
+
+
+                try {
+                    Files.createDirectories(resultDir.resolve("assets"));
+                    Files.createDirectories(resultDir.resolve("assets/fonts"));
+                    Files.copy(Main.class.getResourceAsStream("/jimple.css"), resultDir.resolve("assets/jimple.css"));
+                    Files.copy(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Regular-subset.woff2"), resultDir.resolve("assets/fonts/IBMPlexSansKR-Regular.woff2"));
+                    Files.copy(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Bold-subset.woff2"), resultDir.resolve("assets/fonts/IBMPlexSansKR-Bold.woff2"));
+                } catch (IOException e) {
+                    System.err.println("에셋 파일 복사 중 오류 발생");
+                }
+                
                 ResultManager manager = createResultManager(resultDir);
                 manager.processAndSaveResults(sourceDir);
                 break;
@@ -69,10 +83,28 @@ public class Main {
     private static ResultManager createResultManager(Path resultDir) {
         MarkdownCollector collector = new MarkdownCollector(
                 new SimpleMarkdownFinder(),
-                new MarkdownYmlParser(),
+                new SimpleMarkdownYmlParser(),
                 new SimpleMarkdownExtractor()
         );
         MarkdownGenerator generator = new SimpleMarkdownGenerator(new SimpleMd2HtmlConverter());
         return new ResultManager(collector, generator, resultDir);
+    }
+
+    private static void cleanupResultDirectory(Path resultDir) {
+        if (Files.exists(resultDir)) {
+            try {
+                Files.walk(resultDir)
+                        .sorted((a, b) -> -a.compareTo(b))
+                        .forEach(path -> {
+                            try {
+                                Files.delete(path);
+                            } catch (IOException e) {
+                                System.err.println("파일 삭제 중 오류 발생: " + path);
+                            }
+                        });
+            } catch (IOException e) {
+                System.err.println("결과 디렉터리 정리 중 오류 발생: " + resultDir);
+            }
+        }
     }
 }

@@ -31,3 +31,6 @@ bin/
 
 ### JAVA ###
 target
+
+/jimple-result
+/jimple-result/**
