@@ -8,8 +8,6 @@ import com.jimple.model.config.BlogConfigDefaults;
 import com.jimple.model.config.BlogProperties;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -62,8 +60,8 @@ class ConfigYmlParserTest {
         assertEquals("#ff0000", properties.layout().colors().primary());
         assertEquals("Test User", properties.profile().name());
         assertEquals(1, properties.profile().social().size());
-        assertEquals("github", properties.profile().social().get(0).platform());
-        assertEquals("https://github.com/test", properties.profile().social().get(0).url());
+        assertEquals("github", properties.profile().social().getFirst().platform());
+        assertEquals("https://github.com/test", properties.profile().social().getFirst().url());
         assertFalse(properties.customization().showDate());
         assertEquals("Custom Footer", properties.customization().footerText());
     }
@@ -116,7 +114,7 @@ class ConfigYmlParserTest {
         // Assert
         assertNotNull(result);
         assertInstanceOf(BlogProperties.class, result);
-        verify(mockObjectMapper, never()).readValue(anyString(), (Class<Object>) any());
+        verify(mockObjectMapper, never()).readValue(anyString(), eq(BlogProperties.class));
     }
 
     @Test
@@ -131,7 +129,7 @@ class ConfigYmlParserTest {
         // Assert
         assertNotNull(result);
         assertInstanceOf(BlogProperties.class, result);
-        verify(mockObjectMapper, never()).readValue(anyString(), (Class<Object>) any());
+        verify(mockObjectMapper, never()).readValue(anyString(), eq(BlogProperties.class));
     }
 
     @Test
