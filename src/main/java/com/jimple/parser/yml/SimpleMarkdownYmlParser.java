@@ -1,6 +1,6 @@
 package com.jimple.parser.yml;
 
-import com.jimple.model.MarkdownProperties;
+import com.jimple.model.md.MarkdownProperties;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;

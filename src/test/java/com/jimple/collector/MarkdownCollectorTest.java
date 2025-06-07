@@ -1,8 +1,8 @@
 package com.jimple.collector;
 
 import com.jimple.finder.MarkdownFinder;
-import com.jimple.model.MarkdownFile;
-import com.jimple.model.MarkdownProperties;
+import com.jimple.model.md.MarkdownFile;
+import com.jimple.model.md.MarkdownProperties;
 import com.jimple.parser.extractor.MarkdownExtractor;
 import com.jimple.parser.yml.SimpleMarkdownYmlParser;
 import org.junit.jupiter.api.Test;

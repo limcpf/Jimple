@@ -2,7 +2,7 @@ package com.jimple.manager;
 
 import com.jimple.collector.MarkdownCollector;
 import com.jimple.generator.MarkdownGenerator;
-import com.jimple.model.MarkdownFile;
+import com.jimple.model.md.MarkdownFile;
 
 import java.io.IOException;
 import java.nio.file.Files;

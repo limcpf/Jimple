@@ -1,8 +1,8 @@
 package com.jimple.generator;
 
 import com.jimple.generator.converter.Md2HtmlConverter;
-import com.jimple.model.MarkdownFile;
-import com.jimple.model.MarkdownProperties;
+import com.jimple.model.md.MarkdownFile;
+import com.jimple.model.md.MarkdownProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

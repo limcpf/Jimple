@@ -1,6 +1,6 @@
 package com.jimple.parser.yml;
 
-import com.jimple.model.MarkdownProperties;
+import com.jimple.model.md.MarkdownProperties;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

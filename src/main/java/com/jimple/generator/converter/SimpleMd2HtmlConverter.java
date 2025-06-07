@@ -1,6 +1,6 @@
 package com.jimple.generator.converter;
 
-import com.jimple.model.MarkdownProperties;
+import com.jimple.model.md.MarkdownProperties;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
