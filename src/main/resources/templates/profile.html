@@ -1,0 +1,17 @@
+<div class="profile">
+  {{#avatar}}
+  <img src="{{avatar}}" alt="프로필 이미지" class="profile-avatar">
+  {{/avatar}}
+
+  <h3 class="profile-name">{{name}}</h3>
+  <div class="profile-role">{{role}}</div>
+  <p class="profile-bio">{{bio}}</p>
+
+  <div class="social-links">
+    {{#socialLinks}}
+    <a href="{{url}}" target="_blank" class="social-link {{platform}}">
+      {{platform}}
+    </a>
+    {{/socialLinks}}
+  </div>
+</div>
