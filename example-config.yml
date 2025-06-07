@@ -1,0 +1,38 @@
+# Jimple 블로그 설정
+# 블로그 기본 정보
+title: "My Tech Blog"        # 블로그 제목
+description: "기술 블로그"     # 블로그 설명 (메타태그 용)
+
+# 레이아웃 설정
+layout:
+  # 메뉴 위치: 'top', 'left', 'right' 중 하나
+  menuPosition: "top"
+
+  # 색상 테마
+  colors:
+    primary: "#4a86e8"       # 주 색상 (헤더, 강조 등)
+    secondary: "#63c5da"     # 보조 색상
+    background: "#ffffff"    # 배경 색상
+    text: "#333333"          # 본문 텍스트 색상
+    headings: "#222222"      # 제목 텍스트 색상
+    links: "#0366d6"         # 링크 색상
+
+# 프로필 정보
+profile:
+  name: "홍길동"              # 이름
+  role: "소프트웨어 개발자"     # 직함/역할
+  bio: "Java와 웹 개발에 관심이 많은 개발자입니다."  # 간단한 소개
+  avatar: "profile.jpg"      # 프로필 이미지 (assets 디렉토리 내 경로)
+  social:
+    - platform: "github"
+      url: "https://github.com/username"
+    - platform: "twitter"
+      url: "https://twitter.com/username"
+    - platform: "linkedin"
+      url: "https://linkedin.com/in/username"
+
+# 추가 커스터마이징 옵션
+customization:
+  showDate: true             # 게시물 날짜 표시 여부
+  enableComments: false      # 댓글 기능 활성화 여부
+  footerText: "© 2024 My Blog. All rights reserved."  # 푸터 텍스트

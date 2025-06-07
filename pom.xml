@@ -51,6 +51,26 @@
             <artifactId>commonmark</artifactId>
             <version>0.24.0</version>
         </dependency>
+        <!-- Jackson YAML 처리를 위한 의존성 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
+        <!-- Jackson 데이터 바인딩 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
+        <!-- Java 8 날짜/시간 API 지원 (필요한 경우) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.15.2</version>
+        </dependency>
     </dependencies>
 
     <build>
