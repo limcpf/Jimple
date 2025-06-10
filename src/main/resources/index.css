@@ -1,0 +1,213 @@
+.main-container {
+    padding: 2rem 0rem;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+img.logo {
+    width: 10rem;
+    height: 10rem;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 1.75rem;
+    margin: 0.5rem 0;
+}
+
+.bold {
+    font-weight: 800;
+}
+
+.gradient-text {
+    font-weight: 800;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
+.buttons {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+hr {
+    margin: 2rem 0;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.3s ease;
+    width: 100%;
+    max-width: 250px;
+    cursor: pointer;
+}
+
+.btn-dark {
+    background: #065f46;
+    color: white;
+}
+
+.btn-dark:hover {
+    background: #047857;
+}
+
+.btn-light {
+    background: white;
+    color: #065f46;
+    border: 1px solid #d1fae5;
+}
+
+.btn-light:hover {
+    background: #ecfdf5;
+}
+
+/* 기본: 모바일 */
+.latest-article {
+    padding: 2rem 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    color: #0f172a;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.article-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.article-image {
+    background-color: #f1f5f9;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    font-size: 1.5rem;
+}
+
+.article-content {
+    padding: 1rem;
+}
+
+.article-meta {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.article-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+}
+
+.article-description {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #0f172a;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.read-more {
+    background-color: #0f172a;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+/* 태블릿 이상 */
+@media (min-width: 768px) {
+    .article-card {
+        flex-direction: row;
+    }
+
+    .article-image {
+        flex: 1;
+        height: auto;
+        min-height: 250px;
+    }
+
+    .article-content {
+        flex: 1.2;
+        padding: 2rem;
+    }
+}
+
+/* 태블릿 (768px 이상) */
+@media (min-width: 768px) {
+    h1 {
+        font-size: 2.25rem;
+    }
+
+    .subtitle {
+        font-size: 1.125rem;
+    }
+
+    .buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+}
+
+/* 데스크탑 (1024px 이상) */
+@media (min-width: 1024px) {
+    .main-container {
+        max-width: 700px;
+    }
+
+    h1 {
+        font-size: 2.75rem;
+    }
+
+    .btn {
+        max-width: none;
+        width: auto;
+    }
+}

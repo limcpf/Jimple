@@ -153,6 +153,11 @@ public class Main {
             );
 
             Files.copy(
+                    Objects.requireNonNull(Main.class.getResourceAsStream("/index.css")),
+                    resultDir.resolve("assets/index.css")
+            );
+
+            Files.copy(
                     Objects.requireNonNull(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Regular-subset.woff2")),
                     resultDir.resolve("assets/fonts/IBMPlexSansKR-Regular.woff2")
             );

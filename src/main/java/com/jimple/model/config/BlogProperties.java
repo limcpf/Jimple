@@ -11,6 +11,7 @@ import java.util.List;
 public record BlogProperties(
         String title,
         String description,
+        String logo,
         LayoutConfig layout,
         ProfileConfig profile,
         CustomizationConfig customization
@@ -21,6 +22,7 @@ public record BlogProperties(
         this(
                 BlogConfigDefaults.DEFAULT_TITLE,
                 BlogConfigDefaults.DEFAULT_DESCRIPTION,
+                "",
                 new LayoutConfig(),
                 new ProfileConfig(),
                 new CustomizationConfig()
@@ -30,16 +32,24 @@ public record BlogProperties(
     // 레이아웃 설정
     public record LayoutConfig(
             String menuPosition,
+            WelcomeConfig welcome,
             ColorConfig colors
     ) {
         // 기본 생성자
         public LayoutConfig() {
             this(
                     BlogConfigDefaults.DEFAULT_MENU_POSITION,
+                    new WelcomeConfig(false, "", ""),
                     new ColorConfig()
             );
         }
     }
+
+    public record WelcomeConfig(
+            boolean show,
+            String title,
+            String comment
+    ) { }
 
     // 색상 설정
     public record ColorConfig(

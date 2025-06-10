@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{blogTitle}}</title>
+    <link rel="stylesheet" href="assets/jimple.css">
+    <link rel="stylesheet" href="assets/index.css">
+</head>
+<body>
+<header class="top-header">
+    <div class="header-container">
+        <h1 class="logo">{{blogTitle}}</h1>
+        <nav class="main-menu">
+            {{mainMenu}}
+        </nav>
+    </div>
+</header>
+<div class="main-container">
+    {{#logo}}
+        <img src="{{logo}}" alt="Blog Logo" class="logo" />
+    {{#logo}}
+
+    {{#title}}
+        {{title}}
+    {{/title}}
+
+    {{#comment}}
+        <p class="subtitle">
+            {{comment}}
+        </p>
+    {{/comment}}
+
+    <div class="buttons">
+        <a href="archive.html" class="btn btn-dark">Explore Articles →</a>
+        <a href="profile.html" class="btn btn-light">My Profile</a>
+    </div>
+</div>
+<hr />
+
+<section class="latest-article">
+    <h2 class="section-title">Latest Article</h2>
+    <p class="section-subtitle">Stay updated with our most recent insights</p>
+
+    <article class="article-card">
+        <div class="article-image">
+            <!-- 여기에 <img src="..." alt="..." /> 가능 -->
+        </div>
+        <div class="article-content">
+            <div class="article-meta">
+                <span>📅 June 10, 2025</span>
+                <span>• ⏱️ 8 min read</span>
+            </div>
+            <h3 class="article-title">Understanding Modern Web Development Practices</h3>
+            <p class="article-description">
+                Discover the latest trends and best practices in web development. From performance optimization to component-based architecture, learn how to build better web applications that users love.
+            </p>
+            <p class="article-description">
+                The landscape of web development is constantly evolving, with new tools, frameworks, and best practices emerging regularly. In this comprehensive guide, we'll explore the fundamental principles that drive modern web development and how you can apply them to create exceptional user experiences.
+            </p>
+            <div class="article-footer">
+                <span class="article-author">By Alex Johnson</span>
+                <a class="read-more" href="#">Read Full Article →</a>
+            </div>
+        </div>
+    </article>
+</section>
+<footer>
+    <p>{{footerText}}</p>
+</footer>
+</body>
+</html>

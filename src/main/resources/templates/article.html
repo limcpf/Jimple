@@ -7,15 +7,15 @@
         <link rel="stylesheet" href="assets/jimple.css">
     </head>
     <body class="layout-{{menuPosition}}">
-        <header>
-            <h1 class="blog-title">{{blogTitle}}</h1>
+        <header class="top-header">
+            <div class="header-container">
+                <h1 class="logo">{{blogTitle}}</h1>
+                <nav class="main-menu">
+                    {{mainMenu}}
+                </nav>
+            </div>
         </header>
-
         <div class="container">
-            <nav class="main-menu">
-                {{mainMenu}}
-            </nav>
-
             <main class="content">
                 <article>
                     <header>

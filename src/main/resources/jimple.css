@@ -187,6 +187,47 @@ img, video, iframe {
     height: auto;
 }
 
+.top-header {
+    background-color: white;
+    border-bottom: 1px solid #eaeaea;
+    padding: 0.75rem 1rem;
+}
+
+.header-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: .5rem .25rem;
+}
+
+.main-menu .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.main-menu .nav-list li a {
+    text-decoration: none;
+    color: #0f172a;
+}
+
+footer {
+    color: var(--fg-muted);
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 0.875rem;
+}
+
 /* 12. Dark-mode adaptation */
 @media (prefers-color-scheme: dark) {
     :root {
@@ -223,7 +264,14 @@ img, video, iframe {
         font-size: 1.125rem;            /* ~18 px; high comprehension */
     }
 
+    .logo {
+        margin-bottom: 0;
+        font-size: 1.5rem;
+    }
 
+    .main-menu .nav-list {
+        gap: 1.5rem;
+    }
 }
 
 @media (min-width: 1024px) {
@@ -234,5 +282,23 @@ img, video, iframe {
     body {
         line-height: 1.7;               /* optimal 1.5–1.8 */
         font-size: 1.25rem;            /* ~18 px; high comprehension */
+    }
+
+    .top-header {
+        display: flex;
+        justify-content: center;
+    }
+
+    .header-container {
+        min-width: 1024px;
+        max-width: 1024px;
+    }
+
+    .logo {
+        font-size: 1.75rem;
+    }
+
+    .main-menu .nav-list li a {
+        font-size: 1.125rem;
     }
 }
