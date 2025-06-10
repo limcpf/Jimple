@@ -3,6 +3,9 @@ package com.jimple.manager;
 import com.jimple.collector.MarkdownCollector;
 import com.jimple.generator.MarkdownGenerator;
 import com.jimple.model.md.MarkdownFile;
+import com.jimple.model.md.MarkdownProperties;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,10 +34,23 @@ public class ResultManager {
     public void processAndSaveResults(Path sourceDir) {
         List<MarkdownFile> publishedItems = collector.collectPublishedMarkdowns(sourceDir);
 
+        MarkdownFile mainPage = new MarkdownFile(
+                new MarkdownProperties(true, "index", null),
+                "",
+                "index.html"
+        );
+
+        saveHtmlFile(mainPage, generator.generateMainPage(mainPage));
+
         for (MarkdownFile file : publishedItems) {
             String html = generator.generateToHtml(file);
+
             if (!html.isEmpty()) {
-                saveHtmlFile(file, html);
+                Document doc = Jsoup.parse(html);
+                doc.outputSettings().prettyPrint(true);
+                doc.outputSettings().indentAmount(4);
+
+                saveHtmlFile(file, doc.outerHtml());
             }
         }
     }
