@@ -30,7 +30,7 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
                 String mainPageTemplate = templateEngine.loadTemplate("templates/index.html");
 
                 // 프로필 데이터 준비
-                Map<String, Object> mainPageData = new HashMap<>();
+                Map<String, Object> mainPageData;
                 mainPageData = prepareTemplateData(file, mainPageTemplate);
                 mainPageData.put("logo", config.logo());
                 mainPageData.put("title", config.layout().welcome().title());
