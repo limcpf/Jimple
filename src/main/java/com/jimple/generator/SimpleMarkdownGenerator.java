@@ -21,6 +21,32 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
     }
 
     @Override
+    public String generateMainPage(MarkdownFile file) {
+        String result = "";
+
+        if(config.layout().welcome().show()) {
+            // 프로필 템플릿 로드
+            try {
+                String mainPageTemplate = templateEngine.loadTemplate("templates/index.html");
+
+                // 프로필 데이터 준비
+                Map<String, Object> mainPageData = new HashMap<>();
+                mainPageData = prepareTemplateData(file, mainPageTemplate);
+                mainPageData.put("logo", config.logo());
+                mainPageData.put("title", config.layout().welcome().title());
+                mainPageData.put("comment", config.layout().welcome().comment());
+
+                // 템플릿 적용
+                result = templateEngine.processTemplate(mainPageTemplate, mainPageData);
+            } catch (IOException e) {
+                result = "";
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public String generateToHtml(MarkdownFile file) {
         // 마크다운을 HTML로 변환
         String htmlContent = converter.convertBodyToHtml(file.contents());
@@ -95,10 +121,10 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
     private String generateMenuSection() {
         // 실제 구현에서는 카테고리나 태그 등을 기반으로 메뉴 생성
         return """
-            <ul>
+            <ul class="nav-list">
                 <li><a href="index.html">홈</a></li>
                 <li><a href="about.html">소개</a></li>
-                <li><a href="archive.html">아카이브</a></li>
+                <li><a href="archive.html">리스트</a></li>
             </ul>
         """;
     }

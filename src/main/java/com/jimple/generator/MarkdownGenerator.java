@@ -4,4 +4,5 @@ import com.jimple.model.md.MarkdownFile;
 
 public interface MarkdownGenerator {
     String generateToHtml(MarkdownFile file);
+    String generateMainPage(MarkdownFile file);
 }
