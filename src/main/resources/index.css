@@ -1,3 +1,49 @@
+/* jimple.css의 컬러 시스템과 다크모드 적용 */
+:root {
+    --font-body: 'IBM Plex Sans KR', sans-serif, monospace;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+    /* Contrast-balanced colours (WCAG AA for large text, AAA for body) */
+    --fg: #2E2D2B;        /* 12:1 contrast on #fff */
+    --fg-muted: #757575;
+    --card: #F8F9FA;
+    --point: #FFD6B0;
+    --bg: #F6F7F9;
+    --bg-alt: #F6F7F9;
+    --link: #6D9DC5;
+    --link-visited: #6D9DC5;
+    --border: #E2E6EA;
+    --code-bg: #f5f7fa;
+
+    /* Spacing scale (4-point grid) */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 2rem;
+}
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --fg: #F5F5F2;        /* 12:1 contrast on #fff */
+        --fg-muted: #F5F5F2;
+        --card: #2A2E36;
+        --point: #F6CBA1;
+        --bg: #222C36;
+        --bg-alt: #222C36;
+        --link: #7AAFD9;
+        --link-visited: #7AAFD9;
+        --border: #38414C;
+        --code-bg: #f5f7fa;
+    }
+}
+
+/* 기본 설정 - 새로운 컬러 변수 사용 */
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body), serif;
+}
 
 .main-container {
     padding: 2rem 1rem;
@@ -15,6 +61,7 @@ img.logo {
 h1 {
     font-size: 1.75rem;
     margin: 0.5rem 0;
+    color: var(--fg);
 }
 
 .bold {
@@ -23,14 +70,14 @@ h1 {
 
 .gradient-text {
     font-weight: 800;
-    background: linear-gradient(90deg, #10b981, #34d399);
+    background: linear-gradient(90deg, var(--link), var(--point));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
     font-size: 1rem;
-    color: #4b5563;
+    color: var(--fg-muted);
     margin-top: 1rem;
     line-height: 1.6;
 }
@@ -45,6 +92,7 @@ h1 {
 
 hr {
     margin: 2rem 0;
+    border-color: var(--border);
 }
 
 .btn {
@@ -56,6 +104,14 @@ hr {
     width: 100%;
     max-width: 250px;
     cursor: pointer;
+    border: 1px solid var(--border);
+}
+
+.btn a {
+    color: var(--fg)
+}
+.btn a:visited {
+    color: var(--fg)
 }
 
 .btn-dark {
@@ -68,13 +124,13 @@ hr {
 }
 
 .btn-light {
-    background: white;
-    color: #065f46;
-    border: 1px solid #d1fae5;
+    background: var(--card);
+    color: var(--fg);
+    border: 1px solid var(--border);
 }
 
 .btn-light:hover {
-    background: #ecfdf5;
+    background: var(--point);
 }
 
 /* 기본: 모바일 */
@@ -88,31 +144,32 @@ hr {
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
-    color: #0f172a;
+    color: var(--fg);
 }
 
 .section-subtitle {
     text-align: center;
-    color: #64748b;
+    color: var(--fg-muted);
     margin-bottom: 2rem;
 }
 
 .article-card {
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
+    background-color: var(--card);
     border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    color: var(--fg);
 }
 
 .article-image {
-    background-color: #f1f5f9;
-    height: 180px;
+    background-color: var(--bg-alt);
+    height: 240px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #cbd5e1;
+    color: var(--fg-muted);
     font-size: 1.5rem;
 
     background-size: cover;
@@ -121,12 +178,12 @@ hr {
 }
 
 .article-content {
-    padding: 1rem;
+    padding: 1rem 0 1rem 1rem;
 }
 
 .article-meta {
     font-size: 0.875rem;
-    color: #94a3b8;
+    color: var(--fg-muted);
     margin-bottom: 0.5rem;
     display: flex;
     gap: 0.5rem;
@@ -136,13 +193,13 @@ hr {
 .article-title {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--fg);
     margin-bottom: 0.5rem;
 }
 
 .article-description {
     font-size: 1rem;
-    color: #475569;
+    color: var(--fg);
     line-height: 1.6;
     margin-bottom: 0.75rem;
 }
@@ -152,19 +209,23 @@ hr {
     justify-content: flex-end;
     align-items: center;
     font-size: 0.9rem;
-    color: #0f172a;
+    color: var(--fg);
     margin-top: 1rem;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
 
 .read-more {
-    background-color: #0f172a;
-    color: #fff;
+    background-color: var(--fg);
+    color: var(--bg);
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-weight: 600;
+}
+
+.read-more:hover {
+    background-color: var(--fg-muted);
 }
 
 /* 태블릿 이상 */
@@ -181,7 +242,7 @@ hr {
 
     .article-content {
         flex: 1.2;
-        padding: 2rem;
+        padding: 2rem 0 2rem 2rem;
     }
 }
 
