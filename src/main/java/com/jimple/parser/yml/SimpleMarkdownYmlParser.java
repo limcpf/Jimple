@@ -17,50 +17,84 @@ public class SimpleMarkdownYmlParser implements YmlParser{
         if(frontmatter == null) throw new IllegalArgumentException("contents must not be null");
 
         if(!frontmatter.isEmpty()) {
-            LocalDate date;
-
             Yaml yaml = new Yaml();
             Map<String, Object> yamlMap;
 
             try {
                 yamlMap = yaml.load(frontmatter);
             } catch (YAMLException e) {
-                return new MarkdownProperties(false, "", LocalDate.now());
+                return new MarkdownProperties();
             }
 
-            if(yamlMap == null) { return new MarkdownProperties(false, "", LocalDate.now());}
-
-            boolean publish = false;
-
-            Object publishObj = yamlMap.get("publish");
-            if(publishObj instanceof Boolean b) {
-                publish = b;
+            // publish
+            if(!isPublish(yamlMap.get("publish"))) {
+                return new MarkdownProperties();
             }
 
-            if(publish && !yamlMap.containsKey("title")) {
-                throw new IllegalArgumentException("title must be set");
-            } else if(!publish) {
-                return new MarkdownProperties(false, "", LocalDate.now());
-            }
+            String title = getTitle(yamlMap);
+            LocalDate date = getDate(yamlMap);
+            String description = getDescription(yamlMap);
+            String thumbnailUrl = getThumbnailUrl(yamlMap);
 
-            String title = yamlMap.get("title").toString();
-            Object tempDate = yamlMap.get("date");
-            
-            if(tempDate instanceof Date d) {
-                try {
-                    date = d.toInstant()
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate();
-                } catch (DateTimeParseException e) {
-                    throw new IllegalArgumentException("date must be in yyyy-MM-dd format");
-                }
-            } else {
-                date = LocalDate.now();
-            }
-
-            return new MarkdownProperties(true, title, date);
+            return new MarkdownProperties(true, title, date, description, thumbnailUrl);
         } else {
-            return new MarkdownProperties(false, "", LocalDate.now());
+            return new MarkdownProperties();
         }
+    }
+
+    private boolean isPublish(Object obj) {
+        if(obj instanceof Boolean b) {
+            return b;
+        } else {
+            return false;
+        }
+    }
+
+    private String getTitle(Map<String, Object> map) {
+        if(!map.containsKey("title")) {
+            throw new IllegalArgumentException("title must be set");
+        } else if(map.get("title") instanceof String s) {
+            return s;
+        }
+
+        throw new IllegalArgumentException("title must be a string");
+    }
+
+    private LocalDate getDate(Map<String, Object> map) {
+        Object tempDate = map.get("date");
+
+        LocalDate date;
+
+        if(tempDate instanceof Date d) {
+            try {
+                date = d.toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException("date must be in yyyy-MM-dd format");
+            }
+        } else {
+            date = LocalDate.now();
+        }
+
+        return date;
+    }
+
+    private String getDescription(Map<String, Object> map) {
+        if(!map.containsKey("description")) {
+            return "";
+        } else if(map.get("description") instanceof String s) {
+            return s;
+        }
+
+        throw new IllegalArgumentException("description must be a string");
+    }
+
+    private String getThumbnailUrl(Map<String, Object> map) {
+        if(map.get("thumbnailUrl") instanceof String s) {
+            return s;
+        }
+
+        return "";
     }
 }
