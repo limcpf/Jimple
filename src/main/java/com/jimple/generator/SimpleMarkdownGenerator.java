@@ -3,11 +3,13 @@ package com.jimple.generator;
 import com.jimple.generator.converter.Md2HtmlConverter;
 import com.jimple.model.config.BlogProperties;
 import com.jimple.model.md.MarkdownFile;
+import com.jimple.model.md.MarkdownProperties;
 import com.jimple.parser.template.SimpleTemplateEngine;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SimpleMarkdownGenerator implements MarkdownGenerator {
     private final Md2HtmlConverter converter;
@@ -21,7 +23,30 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
     }
 
     @Override
-    public String generateMainPage(MarkdownFile file) {
+    public String generateLatestArticle(MarkdownFile file) {
+        try {
+            String latestArticleTemplate = templateEngine.loadTemplate("templates/latest-article.html");
+
+            Map<String, Object> latestArticleData = new HashMap<>();
+            latestArticleData.put("dateString", file.properties().date().toString());
+            latestArticleData.put("authorString", config.profile().name());
+            latestArticleData.put("titleString", file.properties().title());
+
+            if(!file.properties().description().isBlank()) {
+                latestArticleData.put("descriptionHtml", generateLatestArticleDescription(file.properties()));
+            }
+
+            latestArticleData.put("urlString", file.path());
+            latestArticleData.put("thumbnailUrl", file.properties().thumbnailUrl());
+
+            return templateEngine.processTemplate(latestArticleTemplate, latestArticleData);
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    @Override
+    public String generateMainPage(MarkdownFile file, MarkdownFile latestFile) {
         String result = "";
 
         if(config.layout().welcome().show()) {
@@ -35,6 +60,7 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
                 mainPageData.put("logo", config.logo());
                 mainPageData.put("title", config.layout().welcome().title());
                 mainPageData.put("comment", config.layout().welcome().comment());
+                mainPageData.put("latestArticleHtml", generateLatestArticle(latestFile));
 
                 // 템플릿 적용
                 result = templateEngine.processTemplate(mainPageTemplate, mainPageData);
@@ -147,4 +173,21 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
         // 템플릿 적용
         return templateEngine.processTemplate(profileTemplate, profileData);
     }
+
+    /**
+     * 최신 게시글 설명 문단 생성
+     * @param properties 마크다운 파일에 대한 설정값
+     */
+    private String generateLatestArticleDescription(MarkdownProperties properties) {
+        String description = properties.description();
+
+        if(description.isBlank()) {
+            return "<p class=\"article-description\">" + properties.title() + "</p>";
+        }
+
+        return description.lines()
+                .map(line -> "<p class=\"article-description\">" + line + "</p>")
+                .collect(Collectors.joining("\n"));
+    }
+
 }
