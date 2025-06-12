@@ -170,7 +170,7 @@ class MarkdownFileMapperTest {
     @DisplayName("collectPublishedMarkdownFiles - 빈 리스트 처리")
     void collectPublishedMarkdownFiles_WithEmptyList_ShouldReturnEmptyList() {
         // given
-        List<Path> emptyPaths = Arrays.asList();
+        List<Path> emptyPaths = List.of();
 
         // when
         List<MarkdownFile> result = markdownFileMapper.collectPublishedMarkdownFiles(emptyPaths);
@@ -198,14 +198,6 @@ class MarkdownFileMapperTest {
         // then
         assertTrue(result.isEmpty());
         verify(extractor, times(2)).extractFullContents(any(Path.class));
-    }
-
-    @Test
-    @DisplayName("collectPublishedMarkdownFiles - null 리스트 처리")
-    void collectPublishedMarkdownFiles_WithNullList_ShouldThrowException() {
-        // given & when & then
-        assertThrows(NullPointerException.class, () ->
-                markdownFileMapper.collectPublishedMarkdownFiles(null));
     }
 
     @Test

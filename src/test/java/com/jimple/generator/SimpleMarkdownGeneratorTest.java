@@ -9,15 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class SimpleMarkdownGeneratorTest {
@@ -111,7 +108,7 @@ public class SimpleMarkdownGeneratorTest {
                     .thenReturn("<html><head><title>${title}</title></head><body>${content}</body></html>");
 
             // 템플릿 처리 모킹
-            when(mockTemplateEngine.processTemplate(anyString(), any(Map.class)))
+            when(mockTemplateEngine.processTemplate(anyString(), anyMap()))
                     .thenReturn("<html><head><title>테스트 제목</title></head><body><p>변환된 내용</p></body></html>");
 
             // 필요한 마크다운 속성들 모킹
@@ -203,7 +200,7 @@ public class SimpleMarkdownGeneratorTest {
             when(mockMarkdownProperties.thumbnailUrl()).thenReturn("thumbnail.jpg");
 
             // 템플릿 처리 모킹
-            when(mockTemplateEngine.processTemplate(anyString(), any(Map.class)))
+            when(mockTemplateEngine.processTemplate(anyString(), anyMap()))
                     .thenAnswer(invocation -> {
                         String template = invocation.getArgument(0);
                         if (template.contains("='latest'")) {
@@ -223,7 +220,7 @@ public class SimpleMarkdownGeneratorTest {
 
             // 메서드 호출 검증
             verify(mockTemplateEngine).loadTemplate("templates/index.html");
-            verify(mockTemplateEngine, atLeastOnce()).processTemplate(anyString(), any(Map.class));
+            verify(mockTemplateEngine, atLeastOnce()).processTemplate(anyString(), anyMap());
         }
 
         @Test

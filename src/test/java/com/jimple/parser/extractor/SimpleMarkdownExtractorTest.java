@@ -16,7 +16,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SimpleMarkdownExtractorTest {
-    SimpleMarkdownExtractor extractor = new SimpleMarkdownExtractor();
+    final SimpleMarkdownExtractor extractor = new SimpleMarkdownExtractor();
 
     @Nested
     @DisplayName("ExtractContents")
@@ -144,12 +144,10 @@ class SimpleMarkdownExtractorTest {
             SimpleMarkdownExtractor extractor = new SimpleMarkdownExtractor();
 
             // Act & Assert
-            Exception exception = assertThrows(RuntimeException.class, () -> {
-                extractor.extractFullContents(nonExistentFile);
-            });
+            Exception exception = assertThrows(RuntimeException.class, () -> extractor.extractFullContents(nonExistentFile));
 
             assertTrue(exception.getMessage().contains("파일을 읽는 중 오류가 발생했습니다"));
-            assertTrue(exception.getCause() instanceof IOException);
+            assertInstanceOf(IOException.class, exception.getCause());
         }
 
         @Test
@@ -167,12 +165,10 @@ class SimpleMarkdownExtractorTest {
                 SimpleMarkdownExtractor extractor = new SimpleMarkdownExtractor();
 
                 // Act & Assert
-                Exception exception = assertThrows(RuntimeException.class, () -> {
-                    extractor.extractFullContents(restrictedFile);
-                });
+                Exception exception = assertThrows(RuntimeException.class, () -> extractor.extractFullContents(restrictedFile));
 
                 assertTrue(exception.getMessage().contains("파일을 읽는 중 오류가 발생했습니다"));
-                assertTrue(exception.getCause() instanceof IOException);
+                assertInstanceOf(IOException.class, exception.getCause());
             } catch (UnsupportedOperationException e) {
                 // POSIX 파일 권한이 지원되지 않는 시스템(예: Windows)에서는 테스트를 건너뜁니다.
                 System.out.println("이 테스트는 현재 파일 시스템에서 지원되지 않습니다.");

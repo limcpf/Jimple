@@ -92,7 +92,8 @@ class SimpleMarkdownFinderTest {
     }
 
     @Test
-    void findAll_ShouldPropagateIOException_AsRuntimeException() throws IOException {
+    @SuppressWarnings("resource")
+    void findAll_ShouldPropagateIOException_AsRuntimeException() {
         try (MockedStatic<Files> filesMock = Mockito.mockStatic(Files.class, Mockito.CALLS_REAL_METHODS)) {
             // Files.isDirectory, isReadable 는 정상 동작하도록 유지
             filesMock.when(() -> Files.isDirectory(tempDir)).thenReturn(true);
@@ -101,7 +102,7 @@ class SimpleMarkdownFinderTest {
             filesMock.when(() -> Files.walk(tempDir)).thenThrow(new IOException("simulated I/O error"));
 
             RuntimeException ex = assertThrows(RuntimeException.class, () -> finder.findAll(tempDir));
-            assertTrue(ex.getCause() instanceof IOException);
+            assertInstanceOf(IOException.class, ex.getCause());
             assertEquals("Error walking directory", ex.getMessage());
         }
     }

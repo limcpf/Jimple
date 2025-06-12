@@ -49,7 +49,7 @@ class SimpleMarkdownYmlParserTest {
 
         assertFalse(properties.publish());
         assertEquals("", properties.title());
-        assertEquals(null, properties.date());
+        assertNull(properties.date());
     }
 
     /**
@@ -69,7 +69,7 @@ class SimpleMarkdownYmlParserTest {
         // 잘못된 YAML이므로 기본값이 반환되어야 함
         assertFalse(properties.publish());
         assertEquals("", properties.title());
-        assertEquals(null, properties.date());
+        assertNull(properties.date());
     }
 
     /**
