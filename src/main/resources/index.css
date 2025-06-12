@@ -1,5 +1,6 @@
+
 .main-container {
-    padding: 2rem 0;
+    padding: 2rem 1rem;
     max-width: 100%;
     margin: 0 auto;
     text-align: center;
@@ -78,7 +79,7 @@ hr {
 
 /* 기본: 모바일 */
 .latest-article {
-    padding: 2rem 1rem;
+    padding: 0rem 2rem;
     max-width: 800px;
     margin: 0 auto;
 }
@@ -113,6 +114,10 @@ hr {
     justify-content: center;
     color: #cbd5e1;
     font-size: 1.5rem;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .article-content {
@@ -144,7 +149,7 @@ hr {
 
 .article-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     font-size: 0.9rem;
     color: #0f172a;
@@ -200,6 +205,7 @@ hr {
 @media (min-width: 1024px) {
     .main-container {
         max-width: 700px;
+        padding: 2rem 2rem;
     }
 
     h1 {
