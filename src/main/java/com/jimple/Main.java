@@ -1,7 +1,8 @@
 package com.jimple;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.jimple.collector.MarkdownCollector;
+import com.jimple.collector.MarkdownFileMapper;
+import com.jimple.finder.MarkdownFinder;
 import com.jimple.finder.SimpleMarkdownFinder;
 import com.jimple.generator.MarkdownGenerator;
 import com.jimple.generator.SimpleMarkdownGenerator;
@@ -108,8 +109,7 @@ public class Main {
     }
 
     private static ResultManager createResultManager(Path resultDir, Properties config) {
-        MarkdownCollector collector = new MarkdownCollector(
-                new SimpleMarkdownFinder(),
+        MarkdownFileMapper mapper = new MarkdownFileMapper(
                 new SimpleMarkdownYmlParser(),
                 new SimpleMarkdownExtractor()
         );
@@ -120,7 +120,9 @@ public class Main {
                 new SimpleTemplateEngine()
         );
 
-        return new ResultManager(collector, generator, resultDir);
+        MarkdownFinder finder = new SimpleMarkdownFinder();
+
+        return new ResultManager(finder, mapper, generator, resultDir);
     }
 
     private static void cleanupResultDirectory(Path resultDir) {
