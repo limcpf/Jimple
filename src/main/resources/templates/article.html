@@ -9,7 +9,7 @@
     <body class="layout-{{menuPosition}}">
         <header class="top-header">
             <div class="header-container">
-                <h1 class="logo">{{blogTitle}}</h1>
+                <h1 class="logo" id="logo" onclick="window.location.href='/'">{{blogTitle}}</h1>
                 <nav class="main-menu">
                     {{mainMenu}}
                 </nav>
@@ -28,6 +28,7 @@
                         <h1 class="article-title">{{title}}</h1>
                     </header>
                     {{content}}
+
                 </article>
             </main>
 
@@ -36,8 +37,14 @@
             </aside>
         </div>
 
+
         <footer>
             <p>{{footerText}}</p>
         </footer>
+        <script>
+            document.getElementById('logo').addEventListener('click', function () {
+                window.location.href = '/';
+            });
+        </script>
     </body>
 </html>
