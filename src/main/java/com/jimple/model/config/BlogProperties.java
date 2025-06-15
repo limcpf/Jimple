@@ -78,7 +78,7 @@ public record BlogProperties(
             String name,
             String role,
             String bio,
-            String avatar,
+            String email,
             List<SocialLink> social
     ) {
         // 기본 생성자
@@ -87,7 +87,7 @@ public record BlogProperties(
                     BlogConfigDefaults.DEFAULT_PROFILE_NAME,
                     BlogConfigDefaults.DEFAULT_PROFILE_ROLE,
                     BlogConfigDefaults.DEFAULT_PROFILE_BIO,
-                    BlogConfigDefaults.DEFAULT_PROFILE_AVATAR,
+                    BlogConfigDefaults.DEFAULT_PROFILE_EMAIL,
                     new ArrayList<>()
             );
         }

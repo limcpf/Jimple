@@ -25,7 +25,7 @@ public class BlogConfigDefaults {
     public static final String DEFAULT_PROFILE_NAME = "블로그 작성자";
     public static final String DEFAULT_PROFILE_ROLE = "";
     public static final String DEFAULT_PROFILE_BIO = "";
-    public static final String DEFAULT_PROFILE_AVATAR = null;
+    public static final String DEFAULT_PROFILE_EMAIL = "example@email.com";
 
     // 추가 설정 기본값
     public static final boolean DEFAULT_SHOW_DATE = true;
