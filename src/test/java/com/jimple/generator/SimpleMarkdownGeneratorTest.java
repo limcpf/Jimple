@@ -119,7 +119,6 @@ public class SimpleMarkdownGeneratorTest {
             when(mockTemplateEngine.loadTemplate("templates/profile.html")).thenReturn("<div>${name}</div>");
             when(mockProfileProperties.role()).thenReturn("개발자");
             when(mockProfileProperties.bio()).thenReturn("자기소개");
-            when(mockProfileProperties.avatar()).thenReturn("avatar.jpg");
 
             // 테스트 실행
             String result = markdownGenerator.generateToHtml(mockMarkdownFile);

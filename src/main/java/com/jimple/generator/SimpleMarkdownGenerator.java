@@ -164,11 +164,10 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
 
         // 프로필 데이터 준비
         Map<String, Object> profileData = new HashMap<>();
-        profileData.put("name", blogProps.profile().name());
-        profileData.put("role", blogProps.profile().role());
-        profileData.put("bio", blogProps.profile().bio());
-        profileData.put("avatar", blogProps.profile().avatar());
-        profileData.put("socialLinks", blogProps.profile().social());
+        profileData.put("nameString", blogProps.profile().name());
+        profileData.put("roleString", blogProps.profile().role());
+        profileData.put("bioHtml", blogProps.profile().bio());
+        profileData.put("emailString", blogProps.profile().email());
 
         // 템플릿 적용
         return templateEngine.processTemplate(profileTemplate, profileData);
