@@ -35,3 +35,7 @@ target
 /jimple-result
 /jimple-result/**
 /dependency-reduced-pom.xml
+/src/test/resources/**/*
+
+logo.webp
+config.yml

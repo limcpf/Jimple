@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{blogTitle}}</title>
+    <link rel="stylesheet" href="assets/jimple.css">
+    <link rel="stylesheet" href="assets/index.css">
+</head>
+<body>
+<header class="top-header">
+    <div class="header-container">
+        <h1 class="logo">{{blogTitle}}</h1>
+        <nav class="main-menu">
+            {{mainMenu}}
+        </nav>
+    </div>
+</header>
+<div class="main-container">
+    {{#logo}}
+        <img src="{{logo}}" alt="Blog Logo" class="logo" />
+    {{#logo}}
+
+    {{#title}}
+        {{title}}
+    {{/title}}
+
+    {{#comment}}
+        <p class="subtitle">
+            {{comment}}
+        </p>
+    {{/comment}}
+
+    <div class="buttons">
+        <a href="archive.html" class="btn btn-dark">게시글 둘러보기 →</a>
+        <a href="profile.html" class="btn btn-light">운영자 소개</a>
+    </div>
+</div>
+
+{{#latestArticleHtml}}
+    <hr />
+    {{latestArticleHtml}}
+{{/latestArticleHtml}}
+
+<footer>
+    <p>{{footerText}}</p>
+</footer>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package com.jimple.generator.converter;
 
-import com.jimple.model.MarkdownProperties;
+import com.jimple.model.md.MarkdownProperties;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -29,13 +29,17 @@ public class SimpleMd2HtmlConverter implements Md2HtmlConverter {
     public String convertHeaderToHtml(MarkdownProperties properties) {
         StringBuilder sb = new StringBuilder();
         sb.append("<header>\n");
-        sb.append("  <h1>").append(properties.title()).append("</h1>\n");
-
+        sb.append("\t<div class=\"post-info\">\n");
+        sb.append("\t\t<span class=\"span\"></span>\n");
         if (properties.date() != null) {
             String formattedDate = properties.date().format(DateTimeFormatter.ISO_LOCAL_DATE);
-            sb.append("  <p class=\"date\">").append(formattedDate).append("</p>\n");
+            sb.append("\t\t<span class=\"date\">").append(formattedDate).append("</span>\n");
+        }else {
+            sb.append("\t\t<span class=\"span\"></span>\n");
         }
+        sb.append("\t</div>\n");
 
+        sb.append("  <h1>").append(properties.title()).append("</h1>\n");
         sb.append("</header>\n");
         return sb.toString();
     }

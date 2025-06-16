@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{title}} - {{blogTitle}}</title>
+        <link rel="stylesheet" href="assets/jimple.css">
+    </head>
+    <body class="layout-{{menuPosition}}">
+        <header class="top-header">
+            <div class="header-container">
+                <h1 class="logo" id="logo" onclick="window.location.href='/'">{{blogTitle}}</h1>
+                <nav class="main-menu">
+                    {{mainMenu}}
+                </nav>
+            </div>
+        </header>
+        <div class="container">
+            <main class="content">
+                <article>
+                    <header>
+                        <div class="post-info">
+                            <div></div>
+                            {{#showDate}}
+                            <div class="article-date">{{date}}</div>
+                            {{/showDate}}
+                        </div>
+                        <h1 class="article-title">{{title}}</h1>
+                    </header>
+                    {{content}}
+
+                </article>
+            </main>
+
+            <aside class="profile-section">
+                {{profile}}
+            </aside>
+        </div>
+
+
+        <footer>
+            <p>{{footerText}}</p>
+        </footer>
+        <script>
+            document.getElementById('logo').addEventListener('click', function () {
+                window.location.href = '/';
+            });
+        </script>
+    </body>
+</html>

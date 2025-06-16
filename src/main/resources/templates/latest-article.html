@@ -1,0 +1,25 @@
+<section class="latest-article">
+    <h2 class="section-title">최신 게시글</h2>
+    <p class="section-subtitle">최신 업데이트를 빠르게 살펴보세요.</p>
+
+    <article class="article-card">
+        {{#thumbnailUrl}}
+            <div class="article-image" style="background-image: url('{{thumbnailUrl}}')">
+            </div>
+        {{/thumbnailUrl}}
+
+        <div class="article-content">
+            <div class="article-meta">
+                <span>📅 {{dateString}}</span>
+                <span>• ✍️ {{authorString}}</span>
+            </div>
+            <h3 class="article-title">{{titleString}}</h3>
+            {{#descriptionHtml}}
+                {{descriptionHtml}}
+            {{/descriptionHtml}}
+            <div class="article-footer">
+                <a class="read-more" href="{{urlString}}">보러가기 →</a>
+            </div>
+        </div>
+    </article>
+</section>
