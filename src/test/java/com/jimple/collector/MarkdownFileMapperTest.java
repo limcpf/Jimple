@@ -12,6 +12,7 @@ import org.mockito.Mock;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -167,6 +168,37 @@ class MarkdownFileMapperTest {
     }
 
     @Test
+    @DisplayName("collectPublishedMarkdownFiles - 게시일자 역순으로 정렬되는지 확인")
+    void collectPublishedMarkdownFiles_ShouldSortedPublishDate() {
+        // given
+        Path path1 = Paths.get("published.md");
+        Path path2 = Paths.get("draft.md");
+        Path path3 = Paths.get("another-published.md");
+        List<Path> paths = Arrays.asList(path1, path2, path3);
+
+        // Mock for published file 1
+        setupMockForPath(path1, "Published Title", true, "Published content", "2025-01-01");
+
+        // Mock for draft file
+        setupMockForPath(path2, "Draft Title", true, "Draft content", "2025-01-03");
+
+        // Mock for published file 2
+        setupMockForPath(path3, "Another Published", true, "Another content", "2025-01-02");
+
+        // when
+        List<MarkdownFile> result = markdownFileMapper.collectPublishedMarkdownFiles(paths);
+
+        // then
+        assertEquals(3, result.size());
+        assertEquals("Published-Title.html", result.get(2).path());
+        assertEquals("Another-Published.html", result.get(1).path());
+        assertEquals("Draft-Title.html", result.getFirst().path());
+
+        // Verify all paths were processed
+        verify(extractor, times(3)).extractFullContents(any(Path.class));
+    }
+
+    @Test
     @DisplayName("collectPublishedMarkdownFiles - 빈 리스트 처리")
     void collectPublishedMarkdownFiles_WithEmptyList_ShouldReturnEmptyList() {
         // given
@@ -254,14 +286,20 @@ class MarkdownFileMapperTest {
         assertEquals("Title-with_special@chars#.html", result.path());
     }
 
-    private void setupMockForPath(Path path, String title, boolean isPublished, String content) {
-        String fullContents = "---\ntitle: " + title + "\npublish: " + isPublished + "\n---\n" + content;
-        String frontmatter = "title: " + title + "\npublish: " + isPublished;
-        MarkdownProperties properties = new MarkdownProperties(isPublished, title, null);
+    private void setupMockForPath(Path path, String title, boolean isPublished, String content, String date) {
+        String fullContents = "---\ntitle: " + title + "\ndate: " + date + "\npublish: " + isPublished + "\n---\n" + content;
+        String frontmatter = "title: " + title + "\ndate: " + date + "\npublish: " + isPublished;
+
+        LocalDate localDate = LocalDate.parse(date);
+        MarkdownProperties properties = new MarkdownProperties(isPublished, title, localDate);
 
         when(extractor.extractFullContents(path)).thenReturn(fullContents);
         when(extractor.extractFrontMatter(fullContents)).thenReturn(frontmatter);
         when(extractor.extractContent(fullContents)).thenReturn(content);
         when(parser.getProperties(frontmatter)).thenReturn(properties);
+    }
+
+    private void setupMockForPath(Path path, String title, boolean isPublished, String content) {
+        this.setupMockForPath(path, title, isPublished, content, LocalDate.now().toString());
     }
 }

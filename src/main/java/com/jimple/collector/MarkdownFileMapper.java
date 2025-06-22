@@ -6,6 +6,8 @@ import com.jimple.parser.extractor.MarkdownExtractor;
 import com.jimple.parser.yml.SimpleMarkdownYmlParser;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ public class MarkdownFileMapper {
     public List<MarkdownFile> collectPublishedMarkdownFiles(List<Path> markdownFiles) {
         return markdownFiles.stream()
                 .map(this::generateMarkdownFile)
+                .sorted(Comparator.comparing(MarkdownFile::getPublishDate, Comparator.nullsLast(LocalDate::compareTo)).reversed())
                 .filter(MarkdownFile::isPublish)
                 .collect(Collectors.toList());
     }
