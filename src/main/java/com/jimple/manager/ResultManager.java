@@ -1,8 +1,13 @@
 package com.jimple.manager;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jimple.collector.MarkdownFileMapper;
 import com.jimple.finder.MarkdownFinder;
 import com.jimple.generator.MarkdownGenerator;
+import com.jimple.model.list.PostPage;
+import com.jimple.model.list.PostPageInfo;
+import com.jimple.model.list.PostPageItem;
 import com.jimple.model.md.MarkdownFile;
 import com.jimple.model.md.MarkdownProperties;
 import org.jsoup.Jsoup;
@@ -11,6 +16,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResultManager {
@@ -39,18 +45,24 @@ public class ResultManager {
 
         List<MarkdownFile> publishedItems = mapper.collectPublishedMarkdownFiles(markdownFiles);
 
+        this.processPostListJson(publishedItems);
+        this.processPostHtml(publishedItems);
+    }
+
+    private void processPostHtml(List<MarkdownFile> markdownFiles) {
         MarkdownFile mainPage = new MarkdownFile(
                 new MarkdownProperties(true, "index", null),
                 "",
                 "index.html"
         );
-        publishedItems.add(mainPage);
 
-        for (MarkdownFile file : publishedItems) {
+        markdownFiles.add(mainPage);
+
+        for (MarkdownFile file : markdownFiles) {
             String html;
 
             if("index.html".equals(file.path())) {
-                html = generator.generateMainPage(file, publishedItems.getFirst());
+                html = generator.generateMainPage(file, markdownFiles.getFirst());
             } else {
                 html = generator.generateToHtml(file);
             }
@@ -63,6 +75,32 @@ public class ResultManager {
         }
     }
 
+    private void processPostListJson(List<MarkdownFile> markdownFiles) {
+        int page = 1;
+        byte count = 0;
+        int countPost = markdownFiles.size();
+
+        List<PostPageItem> postPageItems = new ArrayList<>();
+
+
+        for (MarkdownFile file : markdownFiles) {
+            count++;
+            if(count > 9) {
+                savePostListJsonFile(postPageItems, page, countPost);
+
+                count = 0;
+                page++;
+                postPageItems = new ArrayList<>();
+            }
+
+            postPageItems.add(new PostPageItem(file));
+        }
+
+        if(count != 0) {
+            savePostListJsonFile(postPageItems, page, countPost);
+        }
+    }
+
     private void saveHtmlFile(MarkdownFile item, String html) {
         Path targetPath = resultDir.resolve(item.path());
 
@@ -71,5 +109,27 @@ public class ResultManager {
         } catch (IOException e) {
             throw new RuntimeException("HTML 파일을 저장할 수 없습니다: " + targetPath, e);
         }
+    }
+
+    private void savePostListJsonFile(List<PostPageItem> items, int page, int count) {
+        Path targetPath = resultDir.resolve("post-list-" + page + ".json");
+
+        int lastPage = (int) Math.ceil((double) count / 10);
+
+        PostPageInfo postPageInfo = new PostPageInfo(page, lastPage, count, page < lastPage, page > 1);
+        PostPage postPage = new PostPage(items, postPageInfo);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        try {
+            mapper.writeValueAsString(postPage);
+
+            Files.writeString(targetPath, mapper.writeValueAsString(postPage));
+        } catch (IOException e) {
+            throw new RuntimeException("PostPage 파일을 저장할 수 없습니다: " + targetPath, e);
+        }
+
+
     }
 }
