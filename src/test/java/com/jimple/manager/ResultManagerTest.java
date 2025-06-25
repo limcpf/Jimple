@@ -19,6 +19,7 @@ import static org.mockito.Mockito.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,10 +137,11 @@ class ResultManagerTest {
         // 테스트에 필요한 모의 객체 설정
         Path mockSourceDir = mock(Path.class);
         Path mockMarkdownFilePath = mock(Path.class);
+        Path mockResultPath = mock(Path.class);
 
         // 오류가 발생할 마크다운 파일 객체 생성
         MarkdownFile mockMarkdownFile = new MarkdownFile(
-                new MarkdownProperties(true, "errorFile", null),
+                new MarkdownProperties(true, "errorFile", LocalDate.of(2025, 1, 1)),
                 "",
                 "errorFile.html"
         );
@@ -153,10 +155,12 @@ class ResultManagerTest {
         when(mockMapper.collectPublishedMarkdownFiles(markdownFiles)).thenReturn(publishedItems);
         when(mockGenerator.generateToHtml(eq(mockMarkdownFile))).thenReturn("<html>ErrorFile</html>");
         when(mockResultDir.resolve(anyString())).thenReturn(mock(Path.class));
+        when(mockResultDir.resolve(eq(mockMarkdownFile.path()))).thenReturn(mockResultPath);
+
 
         // Files.writeString 메서드 호출 시 IOException 발생하도록 설정
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
-            mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenThrow(new IOException("Write failed"));
+            mockedFiles.when(() -> Files.writeString(eq(mockResultPath), anyString())).thenThrow(new IOException("Write failed"));
 
             // 예외 발생 검증
             RuntimeException exception = assertThrows(
