@@ -67,14 +67,14 @@ class ResultManagerTest {
 
         // 일반 마크다운 파일 객체 생성
         MarkdownFile mockMarkdownFile = new MarkdownFile(
-                new MarkdownProperties(true, "file1", null),
+                new MarkdownProperties(true, "file1", LocalDate.of(2020, 1, 1)),
                 "",
                 "file1.html"
         );
 
         // 메인 페이지용 마크다운 파일 객체 생성
         MarkdownFile mockMainPage = new MarkdownFile(
-                new MarkdownProperties(true, "index", null),
+                new MarkdownProperties(true, "index", LocalDate.now()),
                 "",
                 "index.html"
         );
@@ -105,8 +105,9 @@ class ResultManagerTest {
             verify(mockGenerator).generateToHtml(Mockito.eq(mockMarkdownFile));
             verify(mockGenerator).generateMainPage(Mockito.eq(mockMainPage), Mockito.any());
 
-            // Files 클래스의 정적 메서드 호출 검증 (2번 호출됨)
-            verify(Files.class, times(2));
+            // Files 클래스의 정적 메서드 호출 검증 (3번 호출됨)
+            // 2025-06-25 json 쓰기 추가
+            verify(Files.class, times(3));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증
@@ -117,20 +118,20 @@ class ResultManagerTest {
                         <body>
                             File1
                         </body>
-                    </html>""", capturedContent.get(0));
+                    </html>""", capturedContent.get(1));
             assertEquals("""
                     <html>
                         <head></head>
                         <body>
                             Index
                         </body>
-                    </html>""", capturedContent.get(1));
+                    </html>""", capturedContent.get(2));
         }
     }
 
     /**
-     * 파일 저장 중 예외가 발생하는 경우 processAndSaveResults 메서드의 동작을 테스트
-     * IOException이 발생하면 RuntimeException 으로 래핑되어 예외가 발생해야 함
+     * 게시글 저장 중 예외가 발생하는 경우 processAndSaveResults 메서드의 동작을 테스트
+     * processPostHtml 에서 IOException이 발생하면 RuntimeException 으로 래핑되어 예외가 발생해야 함
      */
     @Test
     void testProcessAndSaveResultsWhenFileWriteFails() {
@@ -175,6 +176,54 @@ class ResultManagerTest {
             verify(mockFinder).findAll(mockSourceDir);
             verify(mockMapper).collectPublishedMarkdownFiles(markdownFiles);
             verify(mockGenerator).generateToHtml(eq(mockMarkdownFile));
+        }
+    }
+    /**
+     * 게시글 저장 중 예외가 발생하는 경우 processAndSaveResults 메서드의 동작을 테스트
+     * processPostListJson 에서 IOException이 발생하면 RuntimeException 으로 래핑되어 예외가 발생해야 함
+     */
+    @Test
+    void testProcessAndSaveResultsWhenJsonWriteFails() {
+        // 테스트에 필요한 모의 객체 설정
+        Path mockSourceDir = mock(Path.class);
+        Path mockMarkdownFilePath = mock(Path.class);
+        Path mockResultPath = mock(Path.class);
+
+        // 오류가 발생할 마크다운 파일 객체 생성
+        MarkdownFile mockMarkdownFile = new MarkdownFile(
+                new MarkdownProperties(true, "errorFile", LocalDate.of(2025, 1, 1)),
+                "",
+                "errorFile.html"
+        );
+
+        // 마크다운 파일 목록과 게시 대상 항목 설정
+        List<Path> markdownFiles = List.of(mockMarkdownFilePath);
+        List<MarkdownFile> publishedItems = new ArrayList<>(List.of(mockMarkdownFile));
+
+        // 모의 객체 동작 정의
+        when(mockFinder.findAll(mockSourceDir)).thenReturn(markdownFiles);
+        when(mockMapper.collectPublishedMarkdownFiles(markdownFiles)).thenReturn(publishedItems);
+        when(mockGenerator.generateToHtml(eq(mockMarkdownFile))).thenReturn("<html>ErrorFile</html>");
+        when(mockResultDir.resolve(anyString())).thenReturn(mockResultPath);
+        when(mockResultDir.resolve(eq(mockMarkdownFile.path()))).thenReturn(mock(Path.class));
+
+
+        // Files.writeString 메서드 호출 시 IOException 발생하도록 설정
+        try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.writeString(eq(mockResultPath), anyString())).thenThrow(new IOException("Write failed"));
+
+            // 예외 발생 검증
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> resultManager.processAndSaveResults(mockSourceDir)
+            );
+
+            // 예외 메시지 검증
+            assertTrue(exception.getMessage().contains("PostPage 파일을 저장할 수 없습니다: "));
+
+            // 메서드 호출 검증
+            verify(mockFinder).findAll(mockSourceDir);
+            verify(mockMapper).collectPublishedMarkdownFiles(markdownFiles);
         }
     }
 
@@ -271,14 +320,14 @@ class ResultManagerTest {
 
         // 메인 페이지 마크다운 파일 객체 생성
         MarkdownFile mainPageFile = new MarkdownFile(
-                new MarkdownProperties(true, "index", null),
+                new MarkdownProperties(true, "index", LocalDate.now()),
                 "",
                 "index.html"
         );
 
         // 일반 게시글 마크다운 파일 객체 생성
         MarkdownFile articleFile = new MarkdownFile(
-                new MarkdownProperties(true, "일반 게시글", null),
+                new MarkdownProperties(true, "일반 게시글", LocalDate.now()),
                 "",
                 "article.html"
         );
@@ -335,7 +384,7 @@ class ResultManagerTest {
 
         // 마크다운 파일 객체 생성
         MarkdownFile testFile = new MarkdownFile(
-                new MarkdownProperties(true, "테스트 파일", null),
+                new MarkdownProperties(true, "테스트 파일", LocalDate.now()),
                 "",
                 "test.html"
         );
