@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,11 @@ public class ResultManager {
     private final MarkdownFileMapper mapper;
     private final MarkdownGenerator generator;
     private final Path resultDir;
+
+    public static ObjectMapper jsonMapper = new ObjectMapper();
+    static {
+        jsonMapper.registerModule(new JavaTimeModule());
+    }
 
     public ResultManager(MarkdownFinder finder, MarkdownFileMapper mapper, MarkdownGenerator generator, Path resultDir) {
         this.finder = finder;
@@ -49,9 +55,10 @@ public class ResultManager {
         this.processPostHtml(publishedItems);
     }
 
+    // TODO: 테스트 수정 및 추가(파일이 여러개로 나뉘는지)
     private void processPostHtml(List<MarkdownFile> markdownFiles) {
         MarkdownFile mainPage = new MarkdownFile(
-                new MarkdownProperties(true, "index", null),
+                new MarkdownProperties(true, "index", LocalDate.now()),
                 "",
                 "index.html"
         );
@@ -119,13 +126,8 @@ public class ResultManager {
         PostPageInfo postPageInfo = new PostPageInfo(page, lastPage, count, page < lastPage, page > 1);
         PostPage postPage = new PostPage(items, postPageInfo);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-
         try {
-            mapper.writeValueAsString(postPage);
-
-            Files.writeString(targetPath, mapper.writeValueAsString(postPage));
+            Files.writeString(targetPath, jsonMapper.writeValueAsString(postPage));
         } catch (IOException e) {
             throw new RuntimeException("PostPage 파일을 저장할 수 없습니다: " + targetPath, e);
         }
