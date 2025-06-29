@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * ResultManager 클래스의 테스트를 수행하는 클래스
@@ -455,8 +456,7 @@ class ResultManagerTest {
 
     @Test
     void testProcessPostListJson() throws IOException {
-        List<MarkdownFile> markdownFiles = List.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
-                        .stream().map(x -> new MarkdownFile(
+        List<MarkdownFile> markdownFiles = Stream.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").map(x -> new MarkdownFile(
                                 new MarkdownProperties(true, "title-" + x, LocalDate.now()),
                         "",
                         "/title-" + x
