@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ResultManager 클래스의 테스트를 수행하는 클래스
@@ -449,6 +450,63 @@ class ResultManagerTest {
 
             assertEquals("결과 디렉토리를 생성할 수 없습니다: /test/result/dir", exception.getMessage());
             assertEquals(testException, exception.getCause());
+        }
+    }
+
+    @Test
+    void testProcessPostListJson() throws IOException {
+        List<MarkdownFile> markdownFiles = List.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+                        .stream().map(x -> new MarkdownFile(
+                                new MarkdownProperties(true, "title-" + x, LocalDate.now()),
+                        "",
+                        "/title-" + x
+                ))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // 메인 페이지용 마크다운 파일 객체 생성
+        MarkdownFile mockMainPage = new MarkdownFile(
+                new MarkdownProperties(true, "index", LocalDate.now()),
+                "",
+                "index.html"
+        );
+
+        // 테스트에 필요한 모의 객체 설정
+        Path mockSourceDir = mock(Path.class);
+
+        List<Path> markdownFilePaths = markdownFiles.stream()
+                .map(x -> Path.of(x.path()))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // 모의 객체 동작 정의
+        when(mockFinder.findAll(mockSourceDir)).thenReturn(markdownFilePaths);
+        when(mockMapper.collectPublishedMarkdownFiles(markdownFilePaths)).thenReturn(markdownFiles);
+        when(mockGenerator.generateToHtml(any())).thenReturn("<html>File1</html>");
+        when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
+
+        try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenReturn(mock(Path.class));
+
+            // 테스트 대상 메서드 실행
+            resultManager.processAndSaveResults(mockSourceDir);
+
+            // 저장될 HTML 내용을 캡처하기 위한 ArgumentCaptor 설정
+            ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
+
+            // 메서드 호출 검증
+            verify(mockResultDir).resolve("post-list-1.json");
+            verify(mockResultDir).resolve("post-list-2.json");
+
+            // Files 클래스의 정적 메서드 호출 검증 (3번 호출됨)
+            // 2025-06-25 json 쓰기 추가
+            verify(Files.class, times(14));
+            Files.writeString(Mockito.any(), contentCaptor.capture());
+
+            // 캡처된 HTML 내용 검증
+            List<String> capturedContent = contentCaptor.getAllValues();
+            System.out.println(capturedContent.get(0));
+            System.out.println(capturedContent.get(1));
+            assertTrue(capturedContent.get(0).contains("\"current\":1"));
+            assertTrue(capturedContent.get(1).contains("\"current\":2"));
         }
     }
 
