@@ -1,5 +1,6 @@
 package com.jimple.manager;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jimple.collector.MarkdownFileMapper;
 import com.jimple.finder.MarkdownFinder;
 import com.jimple.generator.MarkdownGenerator;
@@ -21,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +37,7 @@ class ResultManagerTest {
     private MarkdownFinder mockFinder;        // 마크다운 파일을 찾는 인터페이스
     private MarkdownFileMapper mockMapper;    // 마크다운 파일을 변환하는 클래스
     private MarkdownGenerator mockGenerator;  // HTML 생성을 담당하는 클래스
+    private ObjectMapper jsonMapper;
     private Path mockResultDir;               // 결과물이 저장될 디렉토리 경로
 
     /**
@@ -47,6 +50,7 @@ class ResultManagerTest {
         mockMapper = mock(MarkdownFileMapper.class);
         mockGenerator = mock(MarkdownGenerator.class);
         mockResultDir = mock(Path.class);
+        jsonMapper = mock(ObjectMapper.class);
 
         // Files 클래스의 정적 메서드를 모킹하여 exists 메서드가 true를 반환하도록 설정
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
@@ -509,5 +513,104 @@ class ResultManagerTest {
             assertTrue(capturedContent.get(1).contains("\"current\":2"));
         }
     }
+
+    /**
+     * PostList 저장 중 예외가 발생하는 경우 processAndSaveResults 메서드의 동작을 테스트
+     * processPostListJon 에서 IOException이 발생하면 RuntimeException 으로 래핑되어 예외가 발생해야 함
+     */
+    @Test
+    void testProcessAndSaveResultsWhenJsonFileWriteFails() {
+        // 테스트에 필요한 모의 객체 설정
+        Path mockSourceDir = mock(Path.class);
+        Path mockMarkdownFilePath = mock(Path.class);
+        Path mockResultPath = mock(Path.class);
+
+        // 오류가 발생할 마크다운 파일 객체 생성
+        MarkdownFile mockMarkdownFile = new MarkdownFile(
+                new MarkdownProperties(true, "errorFile", LocalDate.of(2025, 1, 1)),
+                "",
+                "errorFile.html"
+        );
+
+        // 마크다운 파일 목록과 게시 대상 항목 설정
+        List<Path> markdownFiles = List.of(mockMarkdownFilePath);
+        List<MarkdownFile> publishedItems = new ArrayList<>(List.of(mockMarkdownFile));
+
+        // 모의 객체 동작 정의
+        when(mockFinder.findAll(mockSourceDir)).thenReturn(markdownFiles);
+        when(mockMapper.collectPublishedMarkdownFiles(markdownFiles)).thenReturn(publishedItems);
+        when(mockResultDir.resolve(anyString())).thenReturn(mock(Path.class));
+        when(mockResultDir.resolve(eq(mockMarkdownFile.path()))).thenReturn(mockResultPath);
+
+
+        // Files.writeString 메서드 호출 시 IOException 발생하도록 설정
+        try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.writeString(any(), anyString())).thenThrow(new IOException("Write failed"));
+
+            // 예외 발생 검증
+            RuntimeException exception = assertThrows(
+                    RuntimeException.class,
+                    () -> resultManager.processAndSaveResults(mockSourceDir)
+            );
+
+            // 예외 메시지 검증
+            assertTrue(exception.getMessage().contains("PostPage 파일을 저장할 수 없습니다: "));
+
+            // 메서드 호출 검증
+            verify(mockFinder).findAll(mockSourceDir);
+            verify(mockMapper).collectPublishedMarkdownFiles(markdownFiles);
+        }
+    }
+
+    @Test
+    void testProcessPostListJsonContents() throws IOException {
+        MarkdownFile mockMainPage = new MarkdownFile(
+                new MarkdownProperties(true, "index", LocalDate.now()),
+                "",
+                "index.html"
+        );
+
+        MarkdownFile mockFile = new MarkdownFile(
+                new MarkdownProperties(true, "title", LocalDate.of(2025, 1, 1)),
+                "",
+                "/title.html"
+        );
+
+        List<MarkdownFile> markdownFiles = List.of(mockFile).stream().collect(Collectors.toCollection(ArrayList::new));
+
+        // 테스트에 필요한 모의 객체 설정
+        Path mockSourceDir = mock(Path.class);
+
+        List<Path> markdownFilePaths = markdownFiles.stream()
+                .map(x -> Path.of(x.path()))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        // 모의 객체 동작 정의
+        when(mockFinder.findAll(mockSourceDir)).thenReturn(markdownFilePaths);
+        when(mockMapper.collectPublishedMarkdownFiles(markdownFilePaths)).thenReturn(markdownFiles);
+        when(mockGenerator.generateToHtml(any())).thenReturn("<html>File1</html>");
+        when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
+
+        try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
+            mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenReturn(mock(Path.class));
+
+            // 테스트 대상 메서드 실행
+            resultManager.processAndSaveResults(mockSourceDir);
+
+            // 저장될 HTML 내용을 캡처하기 위한 ArgumentCaptor 설정
+            ArgumentCaptor<String> contentCaptor = ArgumentCaptor.forClass(String.class);
+
+            // 메서드 호출 검증
+            verify(mockResultDir).resolve("post-list-1.json");
+
+            verify(Files.class, times(3));
+            Files.writeString(Mockito.any(), contentCaptor.capture());
+
+            // 캡처된 HTML 내용 검증
+            List<String> capturedContent = contentCaptor.getAllValues();
+            assertEquals( "{\"posts\":[{\"title\":\"title\",\"path\":\"/title.html\",\"date\":\"2025-01-01\"}],\"page\":{\"current\":1,\"last\":1,\"count\":1,\"hasNext\":false,\"hasPrev\":false}}", capturedContent.get(0));
+        }
+    }
+
 
 }
