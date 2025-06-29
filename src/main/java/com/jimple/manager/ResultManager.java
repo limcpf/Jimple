@@ -55,7 +55,6 @@ public class ResultManager {
         this.processPostHtml(publishedItems);
     }
 
-    // TODO: 테스트 수정 및 추가(파일이 여러개로 나뉘는지)
     private void processPostHtml(List<MarkdownFile> markdownFiles) {
         MarkdownFile mainPage = new MarkdownFile(
                 new MarkdownProperties(true, "index", LocalDate.now()),
@@ -92,6 +91,8 @@ public class ResultManager {
 
         for (MarkdownFile file : markdownFiles) {
             count++;
+            postPageItems.add(new PostPageItem(file));
+
             if(count > 9) {
                 savePostListJsonFile(postPageItems, page, countPost);
 
@@ -99,8 +100,6 @@ public class ResultManager {
                 page++;
                 postPageItems = new ArrayList<>();
             }
-
-            postPageItems.add(new PostPageItem(file));
         }
 
         if(count != 0) {
