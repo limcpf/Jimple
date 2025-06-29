@@ -1,6 +1,5 @@
 package com.jimple.manager;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jimple.collector.MarkdownFileMapper;
 import com.jimple.finder.MarkdownFinder;
 import com.jimple.generator.MarkdownGenerator;
@@ -22,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,7 +35,6 @@ class ResultManagerTest {
     private MarkdownFinder mockFinder;        // 마크다운 파일을 찾는 인터페이스
     private MarkdownFileMapper mockMapper;    // 마크다운 파일을 변환하는 클래스
     private MarkdownGenerator mockGenerator;  // HTML 생성을 담당하는 클래스
-    private ObjectMapper jsonMapper;
     private Path mockResultDir;               // 결과물이 저장될 디렉토리 경로
 
     /**
@@ -50,7 +47,6 @@ class ResultManagerTest {
         mockMapper = mock(MarkdownFileMapper.class);
         mockGenerator = mock(MarkdownGenerator.class);
         mockResultDir = mock(Path.class);
-        jsonMapper = mock(ObjectMapper.class);
 
         // Files 클래스의 정적 메서드를 모킹하여 exists 메서드가 true를 반환하도록 설정
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
@@ -507,8 +503,6 @@ class ResultManagerTest {
 
             // 캡처된 HTML 내용 검증
             List<String> capturedContent = contentCaptor.getAllValues();
-            System.out.println(capturedContent.get(0));
-            System.out.println(capturedContent.get(1));
             assertTrue(capturedContent.get(0).contains("\"current\":1"));
             assertTrue(capturedContent.get(1).contains("\"current\":2"));
         }
@@ -576,7 +570,7 @@ class ResultManagerTest {
                 "/title.html"
         );
 
-        List<MarkdownFile> markdownFiles = List.of(mockFile).stream().collect(Collectors.toCollection(ArrayList::new));
+        List<MarkdownFile> markdownFiles = new ArrayList<>(List.of(mockFile));
 
         // 테스트에 필요한 모의 객체 설정
         Path mockSourceDir = mock(Path.class);
@@ -608,7 +602,7 @@ class ResultManagerTest {
 
             // 캡처된 HTML 내용 검증
             List<String> capturedContent = contentCaptor.getAllValues();
-            assertEquals( "{\"posts\":[{\"title\":\"title\",\"path\":\"/title.html\",\"date\":\"2025-01-01\"}],\"page\":{\"current\":1,\"last\":1,\"count\":1,\"hasNext\":false,\"hasPrev\":false}}", capturedContent.get(0));
+            assertEquals( "{\"posts\":[{\"title\":\"title\",\"path\":\"/title.html\",\"date\":\"2025-01-01\"}],\"page\":{\"current\":1,\"last\":1,\"count\":1,\"hasNext\":false,\"hasPrev\":false}}", capturedContent.getFirst());
         }
     }
 
