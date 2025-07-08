@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{blogTitle}}</title>
+    <link rel="stylesheet" href="assets/jimple.css">
+    <link rel="stylesheet" href="assets/list.css">
+</head>
+<body>
+
+<header class="top-header">
+    <div class="header-container">
+        <h1 class="logo">The <span style="color:#10b981">Fresh Code</span></h1>
+        <nav class="main-menu">
+            <ul class="nav-list">
+                <li><a href="index.html">홈</a></li>
+                <li><a href="about.html">소개</a></li>
+                <li><a href="archive.html">리스트</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<div class="list-container" id="list-container">
+</div>
+
+<div class="pagination" id="pagination">
+</div>
+<footer>
+    <p>© 2025 The Fresh Code. All rights reserved.</p>
+</footer>
+<script>
+    async function fetchPostPage(pageNumber) {
+        try {
+            const response = await fetch(`./post-list-${pageNumber}.json`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching post page:', error);
+            return null;
+        }
+    }
+
+    function renderPostList(posts) {
+        const listElement = document.getElementById('list-container');
+        const html = posts.map(post => `
+      <li>
+        <a href="${post.path}">
+          ${post.title} <span style="color: gray; font-size: 0.9em;">(${post.date})</span>
+        </a>
+      </li>
+    `).join('');
+        listElement.innerHTML = html;
+    }
+
+    function renderPagination(pageData) {
+        const pagination = document.getElementById('pagination');
+        let html = '';
+
+        if (pageData.hasPrev) {
+            html += `<button data-page="${pageData.current - 1}">이전</button>`;
+        }
+
+        for (let i = 1; i <= pageData.last; i++) {
+            html += `<button data-page="${i}" ${i === pageData.current ? 'style="font-weight:bold;"' : ''}>${i}</button>`;
+        }
+
+        if (pageData.hasNext) {
+            html += `<button data-page="${pageData.current + 1}">다음</button>`;
+        }
+
+        pagination.innerHTML = html;
+
+        // 이벤트 등록
+        pagination.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                const page = parseInt(button.getAttribute('data-page'));
+                loadPage(page);
+            });
+        });
+    }
+
+    async function loadPage(pageNumber) {
+        const data = await fetchPostPage(pageNumber);
+        if (data && data.posts) {
+            renderPostList(data.posts);
+            renderPagination(data.page);
+        }
+    }
+
+    // 첫 페이지 로딩
+    loadPage(1);
+</script>
+</body>
+</html>
