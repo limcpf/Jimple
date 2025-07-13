@@ -1,0 +1,17 @@
+[
+  {
+    "name": "com.jimple.model.list.PostPage",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.list.PostPageItem",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.list.PostPageInfo",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  }
+]
