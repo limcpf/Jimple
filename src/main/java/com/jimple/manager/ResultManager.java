@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jimple.collector.MarkdownFileMapper;
 import com.jimple.finder.MarkdownFinder;
 import com.jimple.generator.MarkdownGenerator;
+import com.jimple.model.generator.GenerateType;
 import com.jimple.model.list.PostPage;
 import com.jimple.model.list.PostPageInfo;
 import com.jimple.model.list.PostPageItem;
@@ -62,15 +63,27 @@ public class ResultManager {
                 "index.html"
         );
 
+        MarkdownFile listPage = new MarkdownFile(
+                new MarkdownProperties(true, "list", LocalDate.now()),
+                "",
+                "list.html"
+        );
+
         markdownFiles.add(mainPage);
+        markdownFiles.add(listPage);
 
         for (MarkdownFile file : markdownFiles) {
             String html;
 
-            if("index.html".equals(file.path())) {
-                html = generator.generateMainPage(file, markdownFiles.getFirst());
-            } else {
-                html = generator.generateToHtml(file);
+            switch(file.path()) {
+                case "index.html":
+                    html = generator.generateMainPage(file, markdownFiles.getFirst());
+                    break;
+                case "list.html":
+                    html = generator.generateToHtml(file, GenerateType.LIST);
+                    break;
+                default:
+                    html = generator.generateToHtml(file);
             }
 
             Document doc = Jsoup.parse(html);
@@ -93,7 +106,7 @@ public class ResultManager {
             count++;
             postPageItems.add(new PostPageItem(file));
 
-            if(count > 9) {
+            if(count > 4) {
                 savePostListJsonFile(postPageItems, page, countPost);
 
                 count = 0;
@@ -120,7 +133,7 @@ public class ResultManager {
     private void savePostListJsonFile(List<PostPageItem> items, int page, int count) {
         Path targetPath = resultDir.resolve("post-list-" + page + ".json");
 
-        int lastPage = (int) Math.ceil((double) count / 10);
+        int lastPage = (int) Math.ceil((double) count / 5);
 
         PostPageInfo postPageInfo = new PostPageInfo(page, lastPage, count, page < lastPage, page > 1);
         PostPage postPage = new PostPage(items, postPageInfo);

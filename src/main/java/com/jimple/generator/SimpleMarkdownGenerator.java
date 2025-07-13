@@ -2,6 +2,7 @@ package com.jimple.generator;
 
 import com.jimple.generator.converter.Md2HtmlConverter;
 import com.jimple.model.config.BlogProperties;
+import com.jimple.model.generator.GenerateType;
 import com.jimple.model.md.MarkdownFile;
 import com.jimple.model.md.MarkdownProperties;
 import com.jimple.parser.template.SimpleTemplateEngine;
@@ -73,7 +74,7 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
     }
 
     @Override
-    public String generateToHtml(MarkdownFile file) {
+    public String generateToHtml(MarkdownFile file, GenerateType type) {
         // 마크다운을 HTML로 변환
         String htmlContent = converter.convertBodyToHtml(file.contents());
 
@@ -81,7 +82,14 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
         Map<String, Object> templateData = prepareTemplateData(file, htmlContent);
 
         // HTML 페이지 템플릿 적용
-        return applyTemplate(templateData);
+        return switch (type) {
+            case LIST -> applyListTemplate(templateData);
+            default -> applyArticleTemplate(templateData);
+        };
+    }
+
+    public String generateToHtml(MarkdownFile file) {
+        return generateToHtml(file, GenerateType.ARTICLE);
     }
 
     /**
@@ -127,9 +135,26 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
     /**
      * 템플릿을 적용하여 HTML 페이지 생성
      */
-    private String applyTemplate(Map<String, Object> data) {
+    private String applyArticleTemplate(Map<String, Object> data) {
         try {
             String template = templateEngine.loadTemplate("templates/article.html");
+            return templateEngine.processTemplate(template, data);
+        } catch (IOException e) {
+            // 기본 템플릿으로 대체
+            return String.format(
+                    "<!DOCTYPE html><html><head><title>%s</title></head><body>%s</body></html>",
+                    data.get("title"),
+                    data.get("content")
+            );
+        }
+    }
+
+    /**
+     * 템플릿을 적용하여 HTML 페이지 생성
+     */
+    private String applyListTemplate(Map<String, Object> data) {
+        try {
+            String template = templateEngine.loadTemplate("templates/list.html");
             return templateEngine.processTemplate(template, data);
         } catch (IOException e) {
             // 기본 템플릿으로 대체
@@ -150,7 +175,7 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
             <ul class="nav-list">
                 <li><a href="index.html">홈</a></li>
                 <li><a href="about.html">소개</a></li>
-                <li><a href="archive.html">리스트</a></li>
+                <li><a href="list.html">리스트</a></li>
             </ul>
         """;
     }
