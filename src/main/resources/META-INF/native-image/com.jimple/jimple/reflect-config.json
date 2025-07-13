@@ -13,5 +13,44 @@
     "name": "com.jimple.model.list.PostPageInfo",
     "allDeclaredConstructors": true,
     "allDeclaredMethods": true
-  }
-]
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties$LayoutConfig",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties$WelcomeConfig",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties$ColorConfig",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties$ProfileConfig",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties$SocialLink",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.config.BlogProperties$CustomizationConfig",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  }]

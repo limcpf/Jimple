@@ -174,7 +174,6 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
         return """
             <ul class="nav-list">
                 <li><a href="index.html">홈</a></li>
-                <li><a href="about.html">소개</a></li>
                 <li><a href="list.html">리스트</a></li>
             </ul>
         """;

@@ -179,6 +179,11 @@ public class Main {
             );
 
             Files.copy(
+                    Objects.requireNonNull(Main.class.getResourceAsStream("/list.css")),
+                    resultDir.resolve("assets/list.css")
+            );
+
+            Files.copy(
                     Objects.requireNonNull(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Regular-subset.woff2")),
                     resultDir.resolve("assets/fonts/IBMPlexSansKR-Regular.woff2")
             );

@@ -1,0 +1,13 @@
+{
+  "resources": [
+    {
+      "pattern": "templates/.*\\.html"
+    },
+    {
+      "pattern": "config\\.yaml"
+    },
+    {
+      "pattern": "content/.*\\.md"
+    }
+  ]
+}

@@ -98,14 +98,14 @@
 
     /* 포스트 단일 카드 */
     const PostItem = (p) => `
-  <article class="post-item">
+  <div class="post-item">
     <div class="post-category">blog/${p.path || 'uncategorized'}</div>
     <h2 class="post-title"><a href="${p.path}">${p.title}</a></h2>
     <time class="post-date">${formatDate(p.date)}</time>
     <div class="post-tags">
       ${(p.tags || []).map((t) => `<span class="tag">${t}</span>`).join('')}
     </div>
-  </article>`;
+  </div>`;
 
     /* ───────────────────────────── 상태 & 로직 ─────────────────────────── */
     const State = { page: 1 };
