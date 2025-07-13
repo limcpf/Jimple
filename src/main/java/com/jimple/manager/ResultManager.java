@@ -73,18 +73,11 @@ public class ResultManager {
         markdownFiles.add(listPage);
 
         for (MarkdownFile file : markdownFiles) {
-            String html;
-
-            switch(file.path()) {
-                case "index.html":
-                    html = generator.generateMainPage(file, markdownFiles.getFirst());
-                    break;
-                case "list.html":
-                    html = generator.generateToHtml(file, GenerateType.LIST);
-                    break;
-                default:
-                    html = generator.generateToHtml(file);
-            }
+            String html = switch (file.path()) {
+                case "index.html" -> generator.generateMainPage(file, markdownFiles.getFirst());
+                case "list.html" -> generator.generateToHtml(file, GenerateType.LIST);
+                default -> generator.generateToHtml(file);
+            };
 
             Document doc = Jsoup.parse(html);
             doc.outputSettings().prettyPrint(true);
