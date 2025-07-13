@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Main {
-    private static final String VERSION = "1.0.0";
+    private static final String VERSION = "0.0.1";
     private static final String DEFAULT_RESULT_DIR = "jimple-result";
 
     public static void main(String[] args) {
