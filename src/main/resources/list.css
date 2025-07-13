@@ -1,0 +1,170 @@
+/* 리스트 전체 컨테이너 중앙 정렬 */
+.post-list {
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-body);
+}
+
+.post-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.post-category {
+    color: var(--fg-muted);
+    font-size: 0.75rem;
+    font-family: monospace;
+    margin-bottom: 0.25rem;
+}
+
+.post-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0.3rem 0;
+}
+
+.post-title a {
+    text-decoration: none;
+    color: var(--fg);
+}
+
+.post-title a:hover {
+    text-decoration: underline;
+}
+
+.post-date {
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.post-tags {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tag {
+    background-color: #f3f4f6;
+    color: #374151;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+}
+
+/* 다크모드 대응 */
+@media (prefers-color-scheme: dark) {
+    .post-item {
+        border-bottom: 1px solid var(--border);
+    }
+
+    .tag {
+        background-color: #38414c;
+        color: #d1d5db;
+    }
+
+    .post-title a {
+        color: var(--fg);
+    }
+
+    .post-category,
+    .post-date {
+        color: var(--fg-muted);
+    }
+}
+
+/* 페이지네이션 공통 */
+.pagination {
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.pagination button,
+.pagination span {
+    margin: 0 0.25rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.pagination button {
+    background: white;
+    color: #1f2937;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+}
+
+.pagination button:hover {
+    background-color: #f9fafb;
+}
+
+.pagination button.active {
+    background-color: #e5e7eb;
+    font-weight: bold;
+}
+
+.pagination span {
+    border: none;
+    cursor: default;
+    color: #9ca3af;
+    padding: 0.4rem 0.75rem;
+}
+
+/* 다크모드 페이지네이션 */
+@media (prefers-color-scheme: dark) {
+    .pagination button {
+        background-color: var(--bg);
+        color: var(--fg);
+        border-color: var(--border);
+    }
+
+    .pagination button:hover {
+        background-color: #2e3b4e;
+    }
+
+    .pagination button.active {
+        background-color: #38414c;
+    }
+
+    .pagination span {
+        color: #888;
+    }
+}
+
+/* 반응형 대응 */
+@media (max-width: 768px) {
+    .post-item {
+        padding: 1.5rem 0;
+    }
+
+    .post-title {
+        font-size: 1.1rem;
+    }
+
+    .tag {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .pagination button,
+    .pagination span {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .post-list {
+        width: 1024px;
+        padding: var(--space-4);
+    }
+
+    .post-item {
+        padding: 1.5rem 0;
+    }
+}
