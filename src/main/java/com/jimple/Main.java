@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Main {
+    private static final String VERSION = "1.0.0";
     private static final String DEFAULT_RESULT_DIR = "jimple-result";
 
     public static void main(String[] args) {
@@ -36,7 +37,7 @@ public class Main {
         String command = args[0];
         switch (command) {
             case "help" -> printHelp();
-            case "version" -> System.out.println("Jimple v1.0.0");
+            case "version" -> System.out.println("Jimple v" + VERSION);
             case "run" -> runCommand(args);
             default -> {
                 System.out.println("알 수 없는 명령: " + command);
@@ -92,11 +93,29 @@ public class Main {
             blogProperties = configParser.getProperties("");
         }
 
-        cleanupResultDirectory(resultDir);
-        copyAssets(resultDir);
 
-        ResultManager manager = createResultManager(resultDir, blogProperties);
-        manager.processAndSaveResults(sourceDir);
+        try {
+            System.out.println("    기존 결과 디렉터리 삭제...");
+            cleanupResultDirectory(resultDir);
+            System.out.println("    기존 결과 디렉터리 삭제 완료");
+            System.out.println("    assets 디렉터리 복사...");
+            copyAssets(resultDir);
+            System.out.println("    assets 디렉터리 복사 완료");
+            System.out.println("📦 출력 디렉토리: " + resultDir);
+            System.out.println("⚙️ 설정 파일: " + configPath);
+
+            System.out.println("🏗️ 정적 사이트 생성 시작...");
+
+            ResultManager manager = createResultManager(resultDir, blogProperties);
+            manager.processAndSaveResults(sourceDir);
+
+            System.out.println("✅ 정적 사이트가 성공적으로 생성되었습니다!");
+        } catch (Exception e) {
+            System.err.println("❌ 사이트 생성 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+
     }
 
     private static void printHelp() {
