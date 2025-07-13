@@ -3,6 +3,7 @@ package com.jimple.manager;
 import com.jimple.collector.MarkdownFileMapper;
 import com.jimple.finder.MarkdownFinder;
 import com.jimple.generator.MarkdownGenerator;
+import com.jimple.model.generator.GenerateType;
 import com.jimple.model.md.MarkdownFile;
 import com.jimple.model.md.MarkdownProperties;
 import org.jsoup.Jsoup;
@@ -90,6 +91,7 @@ class ResultManagerTest {
         when(mockMapper.collectPublishedMarkdownFiles(markdownFiles)).thenReturn(publishedItems);
         when(mockGenerator.generateToHtml(Mockito.eq(mockMarkdownFile))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
+        when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
 
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
             mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenReturn(mock(Path.class));
@@ -109,7 +111,7 @@ class ResultManagerTest {
 
             // Files 클래스의 정적 메서드 호출 검증 (3번 호출됨)
             // 2025-06-25 json 쓰기 추가
-            verify(Files.class, times(3));
+            verify(Files.class, times(4));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증
@@ -343,6 +345,7 @@ class ResultManagerTest {
         when(mockMapper.collectPublishedMarkdownFiles(any())).thenReturn(publishedItems);
         when(mockGenerator.generateMainPage(eq(mainPageFile), any())).thenReturn("<html>메인 페이지</html>");
         when(mockGenerator.generateToHtml(articleFile)).thenReturn("<html>일반 게시글</html>");
+        when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(any(), any())).thenReturn("<html>Index</html>");
         when(mockResultDir.resolve("index.html")).thenReturn(mockIndexPath);
         when(mockResultDir.resolve("article.html")).thenReturn(mockArticlePath);
@@ -395,6 +398,7 @@ class ResultManagerTest {
         when(mockFinder.findAll(mockSourceDir)).thenReturn(List.of());
         when(mockMapper.collectPublishedMarkdownFiles(any())).thenReturn(new ArrayList<>(List.of(testFile)));
         when(mockGenerator.generateToHtml(testFile)).thenReturn(rawHtml);
+        when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(any(), any())).thenReturn(rawHtml);
         when(mockResultDir.resolve("test.html")).thenReturn(virtualFilePath);
 
@@ -480,6 +484,7 @@ class ResultManagerTest {
         // 모의 객체 동작 정의
         when(mockFinder.findAll(mockSourceDir)).thenReturn(markdownFilePaths);
         when(mockMapper.collectPublishedMarkdownFiles(markdownFilePaths)).thenReturn(markdownFiles);
+        when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateToHtml(any())).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
 
@@ -498,7 +503,7 @@ class ResultManagerTest {
 
             // Files 클래스의 정적 메서드 호출 검증 (3번 호출됨)
             // 2025-06-25 json 쓰기 추가
-            verify(Files.class, times(14));
+            verify(Files.class, times(16));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증
@@ -582,6 +587,7 @@ class ResultManagerTest {
         // 모의 객체 동작 정의
         when(mockFinder.findAll(mockSourceDir)).thenReturn(markdownFilePaths);
         when(mockMapper.collectPublishedMarkdownFiles(markdownFilePaths)).thenReturn(markdownFiles);
+        when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateToHtml(any())).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
 
@@ -597,7 +603,7 @@ class ResultManagerTest {
             // 메서드 호출 검증
             verify(mockResultDir).resolve("post-list-1.json");
 
-            verify(Files.class, times(3));
+            verify(Files.class, times(4));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증
