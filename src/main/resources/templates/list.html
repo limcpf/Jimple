@@ -1,98 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{blogTitle}}</title>
-    <link rel="stylesheet" href="assets/jimple.css">
-    <link rel="stylesheet" href="assets/list.css">
+    <link rel="stylesheet" href="assets/jimple.css" />
+    <link rel="stylesheet" href="assets/list.css" />
 </head>
 <body>
-
 <header class="top-header">
     <div class="header-container">
-        <h1 class="logo">The <span style="color:#10b981">Fresh Code</span></h1>
+        <h1 class="logo">{{blogTitle}}</h1>
         <nav class="main-menu">
-            <ul class="nav-list">
-                <li><a href="index.html">홈</a></li>
-                <li><a href="about.html">소개</a></li>
-                <li><a href="archive.html">리스트</a></li>
-            </ul>
+            {{mainMenu}}
         </nav>
     </div>
 </header>
-<div class="list-container" id="list-container">
-</div>
 
-<div class="pagination" id="pagination">
-</div>
+<main class="content">
+    <div class="post-list" id="post-list"></div>
+</main>
+
+<div class="pagination" id="pagination"></div>
+
 <footer>
     <p>© 2025 The Fresh Code. All rights reserved.</p>
 </footer>
+
 <script>
-    async function fetchPostPage(pageNumber) {
-        try {
-            const response = await fetch(`./post-list-${pageNumber}.json`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+    /* ───────────────────────────── 기본 유틸 ───────────────────────────── */
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+
+    /* 날짜 'YYYY-MM-DD' → 'YYYY년 M월 D일' */
+    const formatDate = (str) => {
+        const [y, m, d] = str.split('-');
+        return `${y}년 ${+m}월 ${+d}일`;
+    };
+
+    /* JSON fetch 공통 래퍼 */
+    const fetchJSON = async (url) => {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Fetch ${url} → ${res.status}`);
+        return res.json();
+    };
+
+    /* ─────────────────────────── 뷰 렌더러 ────────────────────────────── */
+    const View = {
+        list(posts) {
+            $('#post-list').innerHTML = posts.map(PostItem).join('');
+        },
+
+        pagination({ current, last }) {
+            const makeBtn = (p, label = p) => `
+      <button type="button"
+              data-page="${p}"
+              class="pg-btn${p === current ? ' active' : ''}"
+              ${p === current ? ' aria-current="page"' : ''}>
+        ${label}
+      </button>`;
+
+            const parts = [];
+
+            /* Prev */
+            parts.push(
+                current > 1
+                    ? makeBtn(current - 1, '‹ 이전')
+                    : '<button class="pg-btn" disabled aria-disabled="true">‹ 이전</button>'
+            );
+
+            /* 숫자 영역 */
+            const pushRange = (s, e) => { for (let i = s; i <= e; i++) parts.push(makeBtn(i)); };
+
+            if (last <= 7) {
+                pushRange(1, last);
+            } else if (current <= 4) {
+                pushRange(1, 5);
+                parts.push('…', makeBtn(last));
+            } else if (current >= last - 3) {
+                parts.push(makeBtn(1), '…');
+                pushRange(last - 4, last);
+            } else {
+                parts.push(makeBtn(1), '…');
+                pushRange(current - 1, current + 1);
+                parts.push('…', makeBtn(last));
             }
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching post page:', error);
-            return null;
+
+            /* Next */
+            parts.push(
+                current < last
+                    ? makeBtn(current + 1, '다음 ›')
+                    : '<button class="pg-btn" disabled aria-disabled="true">다음 ›</button>'
+            );
+
+            $('#pagination').innerHTML = parts.join('');
+        }
+    };
+
+    /* 포스트 단일 카드 */
+    const PostItem = (p) => `
+  <article class="post-item">
+    <div class="post-category">blog/${p.path || 'uncategorized'}</div>
+    <h2 class="post-title"><a href="${p.path}">${p.title}</a></h2>
+    <time class="post-date">${formatDate(p.date)}</time>
+    <div class="post-tags">
+      ${(p.tags || []).map((t) => `<span class="tag">${t}</span>`).join('')}
+    </div>
+  </article>`;
+
+    /* ───────────────────────────── 상태 & 로직 ─────────────────────────── */
+    const State = { page: 1 };
+
+    async function load(page = 1) {
+        try {
+            const { posts, page: pageMeta } = await fetchJSON(`./post-list-${page}.json`);
+            View.list(posts);
+            View.pagination(pageMeta);
+            State.page = page;
+        } catch (err) {
+            console.error(err);
         }
     }
 
-    function renderPostList(posts) {
-        const listElement = document.getElementById('list-container');
-        const html = posts.map(post => `
-      <li>
-        <a href="${post.path}">
-          ${post.title} <span style="color: gray; font-size: 0.9em;">(${post.date})</span>
-        </a>
-      </li>
-    `).join('');
-        listElement.innerHTML = html;
-    }
-
-    function renderPagination(pageData) {
-        const pagination = document.getElementById('pagination');
-        let html = '';
-
-        if (pageData.hasPrev) {
-            html += `<button data-page="${pageData.current - 1}">이전</button>`;
+    /* ───────────────────────────── 이벤트 바인딩 ───────────────────────── */
+    $('#pagination').addEventListener('click', (e) => {
+        const { page } = e.target.dataset;
+        if (page) {
+            load(+page);
+            scrollTo({ top: 0, behavior: 'smooth' });
         }
+    });
 
-        for (let i = 1; i <= pageData.last; i++) {
-            html += `<button data-page="${i}" ${i === pageData.current ? 'style="font-weight:bold;"' : ''}>${i}</button>`;
-        }
-
-        if (pageData.hasNext) {
-            html += `<button data-page="${pageData.current + 1}">다음</button>`;
-        }
-
-        pagination.innerHTML = html;
-
-        // 이벤트 등록
-        pagination.querySelectorAll('button').forEach(button => {
-            button.addEventListener('click', () => {
-                const page = parseInt(button.getAttribute('data-page'));
-                loadPage(page);
-            });
-        });
-    }
-
-    async function loadPage(pageNumber) {
-        const data = await fetchPostPage(pageNumber);
-        if (data && data.posts) {
-            renderPostList(data.posts);
-            renderPagination(data.page);
-        }
-    }
-
-    // 첫 페이지 로딩
-    loadPage(1);
+    /* ──────────────────────────── 초기 구동 ────────────────────────────── */
+    load();
 </script>
 </body>
 </html>

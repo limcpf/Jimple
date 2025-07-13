@@ -57,7 +57,7 @@ body {
     background: var(--bg);
     font-family: var(--font-body), serif;
     line-height: 1.5;               /* optimal 1.5–1.8 */
-    font-size: 1.2rem;            /* ~18 px; high comprehension */
+    font-size: 1rem;            /* ~18 px; high comprehension */
     word-wrap: break-word;
     -webkit-font-smoothing: antialiased;
 }
@@ -69,7 +69,7 @@ main.content {
 
 article {
     max-width: 800px;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-3);
 }
 
 article > header .post-info {
@@ -87,7 +87,7 @@ article > header {
 }
 article > header > h1 {
     margin: 0;
-    font-size: 2.125rem;
+    font-size: 1.725rem;
     line-height: 2.5rem;
     font-weight: 700;
     letter-spacing: -0.025em;
@@ -120,8 +120,8 @@ h1, h2, h3, h4, h5, h6 {
     margin: var(--space-4) 0 var(--space-2);
 }
 
-article h1 { font-size: 1.75rem; }  /* 36 px ≈ 2× body – keeps ratio 1 : √2 */
-article h2 { font-size: 1.45rem; }
+article h1 { font-size: 1.5rem; }  /* 36 px ≈ 2× body – keeps ratio 1 : √2 */
+article h2 { font-size: 1.35rem; }
 article h3 { font-size: 1.2rem; }
 article h4 { font-size: 1rem; }
 article h5 { font-size: .9rem; }
