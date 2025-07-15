@@ -6,8 +6,9 @@ logo: ""
 
 # 레이아웃 설정
 layout:
+  title: "Test <span style=\"color:#10b981\">Blog</span>"        # 블로그 상단 레이아웃에 등록될 제목
   # 메뉴 위치: 'top', 'left', 'right' 중 하나
-  menuPosition: "top"
+  menuPosition: "top" # 추후 지원 예정
   welcome:
     show: true
     title: "<h1><span class=\"bold\">Welcome to</span> <span class=\"gradient-text\">My Blog</span></h1>"

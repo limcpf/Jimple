@@ -33,14 +33,29 @@ public record BlogProperties(
     public record LayoutConfig(
             String menuPosition,
             WelcomeConfig welcome,
-            ColorConfig colors
+            ColorConfig colors,
+            String title
     ) {
         // 기본 생성자
         public LayoutConfig() {
             this(
                     BlogConfigDefaults.DEFAULT_MENU_POSITION,
                     new WelcomeConfig(false, "", ""),
-                    new ColorConfig()
+                    new ColorConfig(),
+                    ""
+            );
+        }
+
+        public LayoutConfig(
+                String menuPosition,
+                WelcomeConfig welcome,
+                ColorConfig colors
+        ) {
+            this(
+                    menuPosition,
+                    welcome,
+                    colors,
+                    ""
             );
         }
     }
