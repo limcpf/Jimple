@@ -3,6 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="{{description}}">
+        <meta property="og:type" content="article">
+        <meta property="og:title" content="{{title}} - {{blogTitle}}">
+        <meta property="og:description" content="{{description}}">
+        {{#thumbnailUrl}}<meta property="og:image" content="{{thumbnailUrl}}">{{/thumbnailUrl}}
+        <meta property="og:site_name" content="{{blogTitle}}">
         <title>{{title}} - {{blogTitle}}</title>
         <link rel="stylesheet" href="assets/jimple.css">
     </head>
