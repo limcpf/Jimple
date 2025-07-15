@@ -111,6 +111,7 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
 
         // 레이아웃 정보
         data.put("menuPosition", config.layout().menuPosition());
+        data.put("topTitle", config.layout().title());
 
         // 색상 정보
         data.put("primaryColor", config.layout().colors().primary());
