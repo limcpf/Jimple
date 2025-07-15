@@ -102,6 +102,8 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
         data.put("title", file.properties().title());
         data.put("date", file.properties().date());
         data.put("content", htmlContent);
+        data.put("description", file.properties().description());
+        data.put("thumbnailUrl", file.properties().thumbnailUrl());
 
         // 블로그 기본 정보
         data.put("blogTitle", config.title());
