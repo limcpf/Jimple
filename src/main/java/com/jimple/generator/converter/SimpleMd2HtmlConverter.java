@@ -1,19 +1,23 @@
 package com.jimple.generator.converter;
 
 import com.jimple.model.md.MarkdownProperties;
+import org.commonmark.Extension;
+import org.commonmark.ext.gfm.tables.TablesExtension;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class SimpleMd2HtmlConverter implements Md2HtmlConverter {
     private final Parser parser;
     private final HtmlRenderer renderer;
 
     public SimpleMd2HtmlConverter() {
-        this.parser = Parser.builder().build();
-        this.renderer = HtmlRenderer.builder().build();
+        List<Extension> extensions = List.of(TablesExtension.create());
+        this.parser = Parser.builder().extensions(extensions).build();
+        this.renderer = HtmlRenderer.builder().extensions(extensions).build();
     }
 
     @Override
