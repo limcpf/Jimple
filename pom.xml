@@ -49,8 +49,14 @@
         <dependency>
             <groupId>org.commonmark</groupId>
             <artifactId>commonmark</artifactId>
-            <version>0.24.0</version>
+            <version>0.25.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark-ext-gfm-tables</artifactId>
+            <version>0.25.0</version>
+        </dependency>
+
         <!-- Jackson YAML 처리를 위한 의존성 -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
