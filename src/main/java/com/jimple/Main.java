@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class Main {
@@ -168,30 +169,20 @@ public class Main {
             Files.createDirectories(resultDir.resolve("assets"));
             Files.createDirectories(resultDir.resolve("assets/fonts"));
 
-            Files.copy(
-                    Objects.requireNonNull(Main.class.getResourceAsStream("/jimple.css")),
-                    resultDir.resolve("assets/jimple.css")
+            Map<String, String> assetMap = Map.ofEntries(
+                    Map.entry("/jimple.css", "assets/jimple.css"),
+                    Map.entry("/index.css", "assets/index.css"),
+                    Map.entry("/list.css", "assets/list.css"),
+                    Map.entry("/fonts/IBMPlexSansKR-Regular-subset.woff2", "assets/fonts/IBMPlexSansKR-Regular.woff2"),
+                    Map.entry("/fonts/IBMPlexSansKR-Bold-subset.woff2", "assets/fonts/IBMPlexSansKR-Bold.woff2")
             );
 
-            Files.copy(
-                    Objects.requireNonNull(Main.class.getResourceAsStream("/index.css")),
-                    resultDir.resolve("assets/index.css")
-            );
-
-            Files.copy(
-                    Objects.requireNonNull(Main.class.getResourceAsStream("/list.css")),
-                    resultDir.resolve("assets/list.css")
-            );
-
-            Files.copy(
-                    Objects.requireNonNull(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Regular-subset.woff2")),
-                    resultDir.resolve("assets/fonts/IBMPlexSansKR-Regular.woff2")
-            );
-
-            Files.copy(
-                    Objects.requireNonNull(Main.class.getResourceAsStream("/fonts/IBMPlexSansKR-Bold-subset.woff2")),
-                    resultDir.resolve("assets/fonts/IBMPlexSansKR-Bold.woff2")
-            );
+            for (Map.Entry<String, String> entry : assetMap.entrySet()) {
+                Files.copy(
+                        Objects.requireNonNull(Main.class.getResourceAsStream(entry.getKey())),
+                        resultDir.resolve(entry.getValue())
+                );
+            }
 
         } catch (IOException | NullPointerException e) {
             throw new RuntimeException("에셋 파일 복사 중 오류 발생", e);
