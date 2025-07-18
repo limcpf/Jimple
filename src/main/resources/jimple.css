@@ -161,9 +161,12 @@ pre {
     font-size: 0.875rem;
     line-height: 1.25rem;
     color: rgb(243,244,246);
+    max-width: 100%;
+    overflow-x: auto;
 }
 pre, code {
     white-space: pre-wrap;
+    word-break: break-word;
 }
 
 blockquote {
@@ -189,11 +192,14 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: var(--space-3);
+    table-layout: fixed;
+    word-break: break-word;
 }
 th, td {
     padding: var(--space-2) var(--space-3);
     border: 1px solid var(--border);
     text-align: left;
+    word-break: break-word;
 }
 
 /* 11. Images – scale responsively */
@@ -314,7 +320,6 @@ footer {
     table {
         display: block;
         overflow-x: auto;
-        white-space: nowrap;
     }
 }
 
