@@ -8,6 +8,12 @@
     },
     {
       "pattern": "content/.*\\.md"
+    },
+    {
+      "pattern": "fonts/.*\\.woff2"
+    },
+    {
+      "pattern": ".*\\.css"
     }
   ]
 }
