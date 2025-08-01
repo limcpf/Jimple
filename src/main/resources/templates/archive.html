@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="{{blogDescription}} - 아카이브" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{blogTitle}} - 아카이브" />
+    <meta property="og:description" content="{{blogDescription}} - 모든 게시글과 카테고리를 둘러보세요" />
+    <meta property="og:site_name" content="{{blogTitle}}" />
+    <title>{{blogTitle}} - 아카이브</title>
+    <link rel="stylesheet" href="assets/jimple.css" />
+    <link rel="stylesheet" href="assets/list.css" />
+</head>
+<body>
+<header class="top-header">
+    <div class="header-container">
+        <h1 class="logo">{{topTitle}}</h1>
+        <nav class="main-menu">
+            {{mainMenu}}
+        </nav>
+    </div>
+</header>
+
+<main class="content">
+    <div class="archive-container">
+        <div class="archive-header">
+            <h2 class="archive-title">아카이브</h2>
+            <p class="archive-description">모든 게시글과 카테고리를 탐색해보세요</p>
+        </div>
+        
+        <div class="categories-section" id="categories-section">
+            <!-- 카테고리 구조가 여기에 동적으로 로드됩니다 -->
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>{{footerText}}</p>
+</footer>
+
+<script>
+    /* ───────────────────────────── 기본 유틸 ───────────────────────────── */
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => ctx.querySelectorAll(sel);
+
+    /* 날짜 'YYYY-MM-DD' → 'YYYY년 M월 D일' */
+    const formatDate = (str) => {
+        const [y, m, d] = str.split('-');
+        return `${y}년 ${+m}월 ${+d}일`;
+    };
+
+    /* JSON fetch 공통 래퍼 */
+    const fetchJSON = async (url) => {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Fetch ${url} → ${res.status}`);
+        return res.json();
+    };
+
+    /* URL에서 카테고리 경로 추출 */
+    const getCategoryFromUrl = () => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('category') || '';
+    };
+
+    /* 카테고리 뷰를 보여주는 함수 */
+    const showCategoryView = (categoryPath) => {
+        // 카테고리 섹션을 숨기고 카테고리 뷰를 표시
+        const categoriesSection = $('#categories-section');
+        if (categoriesSection) {
+            categoriesSection.style.display = 'none';
+        }
+        
+        // 동적으로 카테고리 컨테이너 생성
+        const existingCategoryView = $('#category-view');
+        if (existingCategoryView) {
+            existingCategoryView.remove();
+        }
+        
+        const categoryView = document.createElement('div');
+        categoryView.id = 'category-view';
+        categoryView.innerHTML = `
+            <div class="category-header">
+                <nav class="breadcrumb" id="breadcrumb"></nav>
+                <h2 class="category-title" id="category-title"></h2>
+            </div>
+            
+            <div class="subcategories" id="subcategories"></div>
+            <div class="post-list" id="post-list"></div>
+        `;
+        
+        $('.archive-container').appendChild(categoryView);
+        
+        // 카테고리 데이터 로드
+        loadCategoryData(categoryPath);
+    };
+
+    /* 아카이브 뷰를 보여주는 함수 */
+    const showArchiveView = () => {
+        // 카테고리 뷰를 숨기고 아카이브 뷰를 표시
+        const categoryView = $('#category-view');
+        if (categoryView) {
+            categoryView.remove();
+        }
+        
+        // 카테고리 섹션을 표시
+        const categoriesSection = $('#categories-section');
+        if (categoriesSection) {
+            categoriesSection.style.display = 'block';
+        }
+    };
+
+    /* 카테고리 데이터 로드 */
+    const loadCategoryData = async (categoryPath = '') => {
+        try {
+            const fileName = categoryPath ? 
+                `category-${categoryPath.replace(/\//g, '-')}.json` : 
+                'category-root.json';
+            
+            const { posts, subCategories, categoryName } = await fetchJSON(`./${fileName}`);
+            
+            CategoryView.breadcrumb(categoryPath);
+            CategoryView.categoryTitle(categoryName);
+            await CategoryView.subcategories(subCategories);
+            CategoryView.posts(posts);
+            
+        } catch (err) {
+            console.error('카테고리 로드 실패:', err);
+            $('#post-list').innerHTML = '<div class="error">카테고리를 불러올 수 없습니다.</div>';
+        }
+    };
+
+    /* ─────────────────────────── 카테고리 뷰 렌더러 ────────────────────────────── */
+    const CategoryView = {
+        breadcrumb(categoryPath) {
+            const parts = categoryPath ? categoryPath.split('/') : [];
+            let currentPath = '';
+            
+            const breadcrumbItems = [
+                '<a href="archive.html" class="breadcrumb-item">전체</a>'
+            ];
+            
+            for (const part of parts) {
+                currentPath += (currentPath ? '/' : '') + part;
+                breadcrumbItems.push(
+                    `<a href="archive.html?category=${encodeURIComponent(currentPath)}" class="breadcrumb-item">${part}</a>`
+                );
+            }
+            
+            $('#breadcrumb').innerHTML = breadcrumbItems.join(' › ');
+        },
+
+        categoryTitle(categoryName) {
+            if(!categoryName) {
+                $('#category-title').textContent = '전체 카테고리';
+            }
+        },
+        
+        async subcategories(subCategories) {
+            if (!subCategories || subCategories.length === 0) {
+                $('#subcategories').innerHTML = '';
+                return;
+            }
+            
+            // 각 하위 카테고리의 하위 카테고리 개수를 계산
+            for (const category of subCategories) {
+                category.subCategoryCount = await this.countSubCategories(category.fullPath);
+            }
+            
+            const items = subCategories.map(category => `
+                <div class="category-card">
+                    <a href="archive.html?category=${encodeURIComponent(category.fullPath)}" class="category-link">
+                        <div class="category-header">
+                            <span class="category-icon">📁</span>
+                            <span class="category-name">${category.name}</span>
+                        </div>
+                        <div class="category-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">게시글</span>
+                                <span class="stat-count">${category.postCount || 0}개</span>
+                            </div>
+                            ${category.subCategoryCount ? `
+                                <div class="stat-item">
+                                    <span class="stat-label">하위 카테고리</span>
+                                    <span class="stat-count">${category.subCategoryCount}개</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </a>
+                </div>
+            `).join('');
+            
+            $('#subcategories').innerHTML = `
+                <div class="subcategories-header">
+                    <h3>하위 카테고리</h3>
+                </div>
+                <div class="categories-grid">
+                    ${items}
+                </div>
+            `;
+        },
+
+        async countSubCategories(categoryPath) {
+            try {
+                const fileName = `category-${categoryPath.replace(/\//g, '-')}.json`;
+                const subCategoryData = await fetchJSON(`./${fileName}`);
+                return subCategoryData.subCategories?.length || 0;
+            } catch (err) {
+                return 0;
+            }
+        },
+
+        posts(posts) {
+            if (!posts || posts.length === 0) {
+                $('#post-list').innerHTML = '<div class="no-posts">이 카테고리에는 게시글이 없습니다.</div>';
+                return;
+            }
+            
+            $('#post-list').innerHTML = posts.map(this.postItem).join('');
+        },
+
+        postItem(p) {
+            return `
+              <div class="post-item">
+                <div class="post-category">${p.categoryPath || 'uncategorized'}</div>
+                <h2 class="post-title"><a href="${p.path}">${p.title}</a></h2>
+                <time class="post-date">${formatDate(p.date)}</time>
+                ${p.description ? `<p class="post-description">${p.description}</p>` : ''}
+              </div>`;
+        }
+    };
+
+    /* ─────────────────────────── 아카이브 뷰 렌더러 ────────────────────────────── */
+    const View = {
+        categories(categoryData) {
+            const categoriesSection = $('#categories-section');
+            
+            if (!categoryData || (!categoryData.subCategories?.length && !categoryData.posts?.length)) {
+                categoriesSection.innerHTML = '<div class="no-content">아직 카테고리가 없습니다.</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            // 루트 레벨 게시글
+            if (categoryData.posts?.length > 0) {
+                html += `
+                    <div class="category-group">
+                        <h3 class="category-name">📝 기타</h3>
+                        <div class="posts-grid">
+                            ${categoryData.posts.map(post => this.postCard(post)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 최상위 카테고리들을 카드 형태로 표시
+            if (categoryData.subCategories?.length > 0) {
+                html += `
+                    <div class="category-group">
+                        <h3 class="category-name">📁 카테고리</h3>
+                        <div class="categories-grid">
+                            ${categoryData.subCategories.map(category => `
+                                <div class="category-card">
+                                    <a href="archive.html?category=${encodeURIComponent(category.fullPath)}" class="category-link">
+                                        <div class="category-header">
+                                            <span class="category-icon">📁</span>
+                                            <span class="category-name">${category.name}</span>
+                                        </div>
+                                        <div class="category-stats">
+                                            <div class="stat-item">
+                                                <span class="stat-label">게시글</span>
+                                                <span class="stat-count">${category.postCount || 0}개</span>
+                                            </div>
+                                            ${category.subCategoryCount ? `
+                                                <div class="stat-item">
+                                                    <span class="stat-label">하위 카테고리</span>
+                                                    <span class="stat-count">${category.subCategoryCount}개</span>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                    </a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            categoriesSection.innerHTML = html;
+        },
+        
+        
+        postCard(post) {
+            return `
+                <div class="post-card">
+                    <h4 class="post-title">
+                        <a href="${post.path}">${post.title}</a>
+                    </h4>
+                    <time class="post-date">${formatDate(post.date)}</time>
+                    ${post.description ? `<p class="post-description">${post.description}</p>` : ''}
+                </div>
+            `;
+        }
+    };
+
+    /* ───────────────────────────── 카테고리 관리 ─────────────────────────── */
+    const CategoryManager = {
+        async loadCategories() {
+            try {
+                const categoryData = await this.loadCategoryDataWithSubcounts();
+                View.categories(categoryData);
+            } catch (err) {
+                console.error('카테고리 로드 실패:', err);
+                $('#categories-section').innerHTML = '<div class="error">카테고리를 불러올 수 없습니다.</div>';
+            }
+        },
+
+        async loadCategoryDataWithSubcounts() {
+            const categoryData = await fetchJSON('./category-root.json');
+            
+            // 각 카테고리에 하위 카테고리 개수 추가
+            if (categoryData.subCategories?.length > 0) {
+                for (const category of categoryData.subCategories) {
+                    category.subCategoryCount = await this.countSubCategories(category.fullPath);
+                }
+            }
+            
+            return categoryData;
+        },
+
+        async countSubCategories(categoryPath) {
+            try {
+                const fileName = `category-${categoryPath.replace(/\//g, '-')}.json`;
+                const subCategoryData = await fetchJSON(`./${fileName}`);
+                return subCategoryData.subCategories?.length || 0;
+            } catch (err) {
+                return 0;
+            }
+        }
+    };
+
+
+    /* ──────────────────────────── 초기 구동 ────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+        const categoryPath = getCategoryFromUrl();
+        
+        if (categoryPath) {
+            // 카테고리 파라미터가 있으면 카테고리 뷰 표시
+            showCategoryView(categoryPath);
+        } else {
+            // 카테고리 파라미터가 없으면 아카이브 뷰 표시
+            showArchiveView();
+            CategoryManager.loadCategories(); // 카테고리 로드
+        }
+    });
+</script>
+
+<style>
+    .archive-container {
+        max-width: 800px;
+        padding: var(--space-3);
+    }
+    
+    .archive-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 2rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .archive-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 2.5rem;
+        color: var(--fg);
+    }
+    
+    .archive-description {
+        margin: 0;
+        color: var(--fg-muted);
+        font-size: 1.1rem;
+    }
+    
+    
+    .category-group {
+        margin-bottom: 2rem;
+    }
+    
+    .category-name {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: var(--fg);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    
+    .posts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    /* 카테고리 카드 개선된 스타일 */
+    .category-stats {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--fg-muted);
+        font-weight: normal;
+    }
+
+    .stat-count {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--fg);
+    }
+    
+    .category-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--card);
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+    
+    .category-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .category-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        padding: 1.5rem;
+    }
+    
+    .category-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .category-icon {
+        font-size: 1.5rem;
+    }
+    
+    .category-header .category-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--fg);
+        margin: 0;
+    }
+    
+    
+    .post-card {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        background: var(--card);
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .post-card:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .post-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+    }
+    
+    .post-title a {
+        text-decoration: none;
+        color: var(--fg);
+    }
+    
+    .post-title a:hover {
+        color: var(--link);
+    }
+    
+    .post-date {
+        font-size: 0.9rem;
+        color: var(--fg-muted);
+    }
+    
+    .post-description {
+        margin: 0.5rem 0 0 0;
+        color: var(--fg-muted);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    /* 카테고리 뷰 스타일 */
+    #category-view {
+        margin-top: 2rem;
+    }
+    
+    #category-view .category-header {
+        margin-bottom: 2rem;
+    }
+    
+    #category-view .breadcrumb {
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--fg-muted);
+    }
+    
+    #category-view .breadcrumb-item {
+        color: var(--fg-muted);
+        text-decoration: none;
+    }
+    
+    #category-view .breadcrumb-item:hover {
+        color: var(--fg);
+        text-decoration: underline;
+    }
+    
+    #category-view .category-title {
+        margin: 0;
+        font-size: 2rem;
+        color: var(--fg);
+    }
+    
+    #category-view .subcategories {
+        margin-bottom: 2rem;
+    }
+    
+    #category-view .subcategories-header h3 {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.2rem;
+        color: var(--fg);
+    }
+    
+    #category-view .post-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    #category-view .post-item {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        background: var(--card);
+    }
+    
+    #category-view .post-category {
+        font-size: 0.9rem;
+        color: var(--fg-muted);
+        margin-bottom: 0.5rem;
+    }
+    
+    #category-view .post-title {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.3rem;
+    }
+    
+    #category-view .post-title a {
+        text-decoration: none;
+        color: var(--fg);
+    }
+    
+    #category-view .post-title a:hover {
+        color: var(--link);
+    }
+    
+    #category-view .post-date {
+        font-size: 0.9rem;
+        color: var(--fg-muted);
+    }
+    
+    #category-view .post-description {
+        color: var(--fg-muted);
+        font-size: 0.9rem;
+        margin: 0.5rem 0 0 0;
+        line-height: 1.4;
+    }
+    
+    #category-view .no-posts {
+        text-align: center;
+        padding: 2rem;
+        color: var(--fg-muted);
+        font-style: italic;
+    }
+
+    
+    
+    .no-content, .error {
+        text-align: center;
+        padding: 2rem;
+        color: var(--fg-muted);
+        font-style: italic;
+    }
+    
+    .error {
+        color: #c33;
+    }
+    
+    @media (max-width: 768px) {
+        .posts-grid {
+            grid-template-columns: 1fr;
+        }
+        
+    }
+</style>
+</body>
+</html>

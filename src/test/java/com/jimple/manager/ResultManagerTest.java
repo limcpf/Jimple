@@ -92,6 +92,7 @@ class ResultManagerTest {
         when(mockGenerator.generateToHtml(Mockito.eq(mockMarkdownFile))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
         when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
+        when(mockGenerator.generateArchivePage(any())).thenReturn("<html>Archive</html>");
 
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
             mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenReturn(mock(Path.class));
@@ -109,27 +110,28 @@ class ResultManagerTest {
             verify(mockGenerator).generateToHtml(Mockito.eq(mockMarkdownFile));
             verify(mockGenerator).generateMainPage(Mockito.eq(mockMainPage), Mockito.any());
 
-            // Files 클래스의 정적 메서드 호출 검증 (3번 호출됨)
-            // 2025-06-25 json 쓰기 추가
-            verify(Files.class, times(4));
+            // Files 클래스의 정적 메서드 호출 검증
+            // PostList JSON(1번) + Category JSON(1번) + HTML파일들(4번: file1, index, list, archive) = 총 6번
+            verify(Files.class, times(6));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증
             List<String> capturedContent = contentCaptor.getAllValues();
+            // PostList JSON(0), Category JSON(1), HTML 파일들(2,3,4)
             assertEquals("""
                     <html>
                         <head></head>
                         <body>
                             File1
                         </body>
-                    </html>""", capturedContent.get(1));
+                    </html>""", capturedContent.get(2)); // HTML 파일 인덱스 조정
             assertEquals("""
                     <html>
                         <head></head>
                         <body>
                             Index
                         </body>
-                    </html>""", capturedContent.get(2));
+                    </html>""", capturedContent.get(3)); // HTML 파일 인덱스 조정
         }
     }
 
@@ -347,6 +349,7 @@ class ResultManagerTest {
         when(mockGenerator.generateToHtml(articleFile)).thenReturn("<html>일반 게시글</html>");
         when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(any(), any())).thenReturn("<html>Index</html>");
+        when(mockGenerator.generateArchivePage(any())).thenReturn("<html>Archive</html>");
         when(mockResultDir.resolve("index.html")).thenReturn(mockIndexPath);
         when(mockResultDir.resolve("article.html")).thenReturn(mockArticlePath);
 
@@ -400,6 +403,7 @@ class ResultManagerTest {
         when(mockGenerator.generateToHtml(testFile)).thenReturn(rawHtml);
         when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(any(), any())).thenReturn(rawHtml);
+        when(mockGenerator.generateArchivePage(any())).thenReturn(rawHtml);
         when(mockResultDir.resolve("test.html")).thenReturn(virtualFilePath);
 
         // 파일 저장 시 전달되는 HTML 캡처를 위한 ArgumentCaptor 설정
@@ -487,6 +491,7 @@ class ResultManagerTest {
         when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateToHtml(any())).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
+        when(mockGenerator.generateArchivePage(any())).thenReturn("<html>Archive</html>");
 
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
             mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenReturn(mock(Path.class));
@@ -501,9 +506,9 @@ class ResultManagerTest {
             verify(mockResultDir).resolve("post-list-1.json");
             verify(mockResultDir).resolve("post-list-2.json");
 
-            // Files 클래스의 정적 메서드 호출 검증 (3번 호출됨)
-            // 2025-06-25 json 쓰기 추가
-            verify(Files.class, times(16));
+            // Files 클래스의 정적 메서드 호출 검증
+            // PostList JSON(3번) + Category JSON(1번) + HTML파일들(14번: 11개 파일 + index + list + archive) = 총 18번
+            verify(Files.class, times(18));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증
@@ -590,6 +595,7 @@ class ResultManagerTest {
         when(mockGenerator.generateToHtml(any(), eq(GenerateType.LIST))).thenReturn("<html>File1</html>");
         when(mockGenerator.generateToHtml(any())).thenReturn("<html>File1</html>");
         when(mockGenerator.generateMainPage(Mockito.eq(mockMainPage), Mockito.any())).thenReturn("<html>Index</html>");
+        when(mockGenerator.generateArchivePage(any())).thenReturn("<html>Archive</html>");
 
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class)) {
             mockedFiles.when(() -> Files.writeString(any(Path.class), anyString())).thenReturn(mock(Path.class));
@@ -603,7 +609,8 @@ class ResultManagerTest {
             // 메서드 호출 검증
             verify(mockResultDir).resolve("post-list-1.json");
 
-            verify(Files.class, times(4));
+            // PostList JSON(1번) + Category JSON(1번) + HTML파일들(4번: 1개 파일 + index + list + archive) = 총 6번
+            verify(Files.class, times(6));
             Files.writeString(Mockito.any(), contentCaptor.capture());
 
             // 캡처된 HTML 내용 검증

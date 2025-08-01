@@ -35,8 +35,9 @@ public class SimpleMarkdownYmlParser implements YmlParser{
             LocalDate date = getDate(yamlMap);
             String description = getDescription(yamlMap);
             String thumbnailUrl = getThumbnailUrl(yamlMap);
+            String path = getPath(yamlMap);
 
-            return new MarkdownProperties(true, title, date, description, thumbnailUrl);
+            return new MarkdownProperties(true, title, date, description, thumbnailUrl, path);
         } else {
             return new MarkdownProperties();
         }
@@ -92,6 +93,14 @@ public class SimpleMarkdownYmlParser implements YmlParser{
 
     private String getThumbnailUrl(Map<String, Object> map) {
         if(map.get("thumbnailUrl") instanceof String s) {
+            return s;
+        }
+
+        return "";
+    }
+
+    private String getPath(Map<String, Object> map) {
+        if(map.get("path") instanceof String s) {
             return s;
         }
 

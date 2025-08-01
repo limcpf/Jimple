@@ -74,6 +74,19 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
     }
 
     @Override
+    public String generateArchivePage(MarkdownFile file) {
+        try {
+            String archiveTemplate = templateEngine.loadTemplate("templates/archive.html");
+            
+            Map<String, Object> archiveData = prepareTemplateData(file, archiveTemplate);
+            
+            return templateEngine.processTemplate(archiveTemplate, archiveData);
+        } catch (IOException | RuntimeException e) {
+            return "";
+        }
+    }
+
+    @Override
     public String generateToHtml(MarkdownFile file, GenerateType type) {
         // 마크다운을 HTML로 변환
         String htmlContent = converter.convertBodyToHtml(file.contents());
@@ -178,6 +191,7 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
             <ul class="nav-list">
                 <li><a href="index.html">홈</a></li>
                 <li><a href="list.html">리스트</a></li>
+                <li><a href="archive.html">아카이브</a></li>
             </ul>
         """;
     }
@@ -215,5 +229,4 @@ public class SimpleMarkdownGenerator implements MarkdownGenerator {
                 .map(line -> "<p class=\"article-description\">" + line + "</p>")
                 .collect(Collectors.joining("\n"));
     }
-
 }
