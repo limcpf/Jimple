@@ -8,4 +8,5 @@ public interface MarkdownGenerator {
     String generateToHtml(MarkdownFile file, GenerateType type);
     String generateMainPage(MarkdownFile file, MarkdownFile latestFile);
     String generateLatestArticle(MarkdownFile file);
+    String generateArchivePage(MarkdownFile file);
 }

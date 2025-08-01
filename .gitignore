@@ -40,3 +40,5 @@ logo.webp
 config.yml
 test_*.yml
 test_*.json
+
+CLAUDE.md

@@ -10,15 +10,16 @@ public record MarkdownProperties(
         String title,
         LocalDate date,
         String description,
-        String thumbnailUrl
+        String thumbnailUrl,
+        String path
 ) implements Properties {
 
     public MarkdownProperties() {
-        this(false, "", null);
+        this(false, "", null, "", "", "");
     }
 
     public MarkdownProperties(boolean publish, String title, LocalDate date) {
-        this(publish, title, date, "", "");
+        this(publish, title, date, "", "", "");
     }
 
     @Override
@@ -28,6 +29,7 @@ public record MarkdownProperties(
                 ", title='" + title + '\'' +
                 ", date=" + date +
                 ", thumbnailUrl='" + thumbnailUrl + '\'' +
+                ", path='" + path + '\'' +
                 ", description=\n" + description +
                 '}';
     }

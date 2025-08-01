@@ -202,6 +202,7 @@ class SimpleMarkdownYmlParserTest {
         MarkdownProperties properties = parser.getProperties(frontmatter);
 
         assertEquals("https://example.com/image.jpg", properties.thumbnailUrl());
+        assertEquals("", properties.path()); // path가 없는 경우 빈 문자열
     }
 
     @Test
@@ -231,5 +232,85 @@ class SimpleMarkdownYmlParserTest {
 
         // 문자열이 아닌 값은 빈 문자열로 처리되어야 함
         assertEquals("", properties.thumbnailUrl());
+    }
+
+    //===== path 필드 테스트 =====
+
+    @Test
+    void testPathParsingWithValidValue() {
+        String frontmatter = """
+            title: My Title
+            publish: true
+            date: 2023-10-10
+            path: 개발/Java/스프링
+            """;
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        assertEquals("개발/Java/스프링", properties.path());
+    }
+
+    @Test
+    void testMissingPath() {
+        String frontmatter = """
+            title: My Title
+            publish: true
+            date: 2023-10-10
+            """;
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        // path가 없는 경우 빈 문자열이 반환되어야 함
+        assertEquals("", properties.path());
+    }
+
+    @Test
+    void testPathWithSlashes() {
+        String frontmatter = """
+            title: My Title
+            publish: true
+            date: 2023-10-10
+            path: /개발/Java/스프링/
+            """;
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        assertEquals("/개발/Java/스프링/", properties.path());
+    }
+
+    @Test
+    void testInvalidPathType() {
+        String frontmatter = """
+            title: My Title
+            publish: true
+            date: 2023-10-10
+            path: 12345
+            """;
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        // 문자열이 아닌 값은 빈 문자열로 처리되어야 함
+        assertEquals("", properties.path());
+    }
+
+    @Test
+    void testAllFieldsWithPath() {
+        String frontmatter = """
+            title: 완전한 예제
+            publish: true
+            date: 2023-10-10
+            description: 이것은 전체 필드를 포함하는 예제입니다
+            thumbnailUrl: https://example.com/image.jpg
+            path: 개발/Java/스프링부트
+            """;
+        SimpleMarkdownYmlParser parser = new SimpleMarkdownYmlParser();
+        MarkdownProperties properties = parser.getProperties(frontmatter);
+
+        assertTrue(properties.publish());
+        assertEquals("완전한 예제", properties.title());
+        assertEquals(LocalDate.of(2023, 10, 10), properties.date());
+        assertEquals("이것은 전체 필드를 포함하는 예제입니다", properties.description());
+        assertEquals("https://example.com/image.jpg", properties.thumbnailUrl());
+        assertEquals("개발/Java/스프링부트", properties.path());
     }
 }
