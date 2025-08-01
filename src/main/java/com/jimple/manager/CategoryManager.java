@@ -5,7 +5,6 @@ import com.jimple.model.category.PathSegment;
 import com.jimple.model.md.MarkdownFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 카테고리 관리를 담당하는 클래스
@@ -96,7 +95,7 @@ public class CategoryManager {
         
         // 마지막 카테고리에 파일 추가
         if (!segments.isEmpty()) {
-            PathSegment lastSegment = segments.get(segments.size() - 1);
+            PathSegment lastSegment = segments.getLast();
             CategoryInfo category = categoryMap.get(lastSegment.fullPath());
             if (category != null) {
                 category.posts().add(file);

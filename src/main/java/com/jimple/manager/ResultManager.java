@@ -133,7 +133,7 @@ public class ResultManager {
         List<String> categoryPaths = categoryManager.getAllCategoryPaths(markdownFiles);
         
         // 루트 카테고리 추가 (빈 문자열)
-        categoryPaths.add(0, "");
+        categoryPaths.addFirst("");
         
         // 각 카테고리별로 JSON 파일 생성
         for (String categoryPath : categoryPaths) {

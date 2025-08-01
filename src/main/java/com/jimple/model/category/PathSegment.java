@@ -25,12 +25,12 @@ public record PathSegment(String segment, int level, String fullPath) {
         String[] segments = path.split("/");
         
         return Arrays.stream(segments)
-                .filter(segment -> !segment.trim().isEmpty())
                 .map(String::trim)
+                .filter(trim -> !trim.isEmpty())
                 .collect(ArrayList::new, (list, segment) -> {
                     int level = list.size();
                     String fullPath = level == 0 ? segment : 
-                        list.get(list.size() - 1).fullPath() + "/" + segment;
+                        list.getLast().fullPath() + "/" + segment;
                     list.add(new PathSegment(segment, level, fullPath));
                 }, ArrayList::addAll);
     }
