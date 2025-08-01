@@ -20,7 +20,27 @@
     "allDeclaredMethods": true
   },
   {
-    "name": "com.jimple.model.config.BlogProperties",
+    "name": "com.jimple.model.category.CategoryInfo",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.category.CategoryPage",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.category.CategoryPageItem",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.category.CategorySummary",
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true
+  },
+  {
+    "name": "com.jimple.model.category.PathSegment",
     "allDeclaredConstructors": true,
     "allDeclaredMethods": true
   },
